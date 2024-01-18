@@ -5,6 +5,9 @@ from __future__ import annotations
 
 import os
 import sys
+from random import choice, shuffle
+
+from utils.parse import maybe
 
 
 def tester00() -> None:
@@ -12,6 +15,18 @@ def tester00() -> None:
   stuff = [os, sys, 'hello world']
   for item in stuff:
     print(item)
+
+
+def tester01() -> None:
+  """Maybe?"""
+  some = [0, 0.0, 0.0 + 0.0 * 1j, list(), dict(), set(), '', (), b'']
+  bla = ([*[None for _ in range(5)], choice(some)])
+  shuffle(bla)
+  print(maybe(bla))
+
+
+def tester02() -> None:
+  """sets"""
 
 
 if __name__ == '__main__':
