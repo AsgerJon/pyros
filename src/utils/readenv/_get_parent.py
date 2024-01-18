@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import os.path
 
+from utils.text import monoSpace
+
 
 def getParent(*args, **kwargs) -> str:
   """Finds parent path"""
@@ -32,7 +34,7 @@ def getParent(*args, **kwargs) -> str:
     directory = os.path.dirname(directory)
   elif os.path.isfile(directory):
     e = """getParent received file: '%s' with allowFile flag set to False!"""
-    raise NotADirectoryError(e % directory)
+    raise NotADirectoryError(monoSpace(e % directory))
   if not depth:
     return directory
   directory = os.path.normcase(os.path.join(directory, '..'))

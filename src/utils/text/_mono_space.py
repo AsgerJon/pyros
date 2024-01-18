@@ -55,3 +55,8 @@ def monoSpace(msg: str, **kwargs) -> str:
   OSNewLineChar = dict(unix='\n', windows='\r\n', mac='\n', oldmac='\r')
   if newLineChar.lower() in OSNewLineChar:
     newLineChar = OSNewLineChar.get(newLineChar.lower())
+  msg = msg.replace(newLineTag, newLineChar)
+  msg = msg.replace('<tab>', ' ' * tabLength)
+  for i in range(16):
+    msg = msg.replace('<%d>' % i, ' ' * i)
+  return msg
