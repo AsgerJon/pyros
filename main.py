@@ -7,6 +7,7 @@ import os
 import sys
 from random import choice, shuffle
 
+from pyros import RosMaster
 from utils.parse import maybe
 
 
@@ -26,8 +27,13 @@ def tester01() -> None:
 
 
 def tester02() -> None:
-  """sets"""
+  """RosMaster again"""
+  rosMaster = RosMaster()
+  print(rosMaster.URI)
+  print(rosMaster.machine)
+  for node in rosMaster:
+    print(node)
 
 
 if __name__ == '__main__':
-  tester00()
+  tester02()
