@@ -26,7 +26,7 @@ class MetaMaster(type):
   @staticmethod
   def getReady() -> list[dict[str, str]]:
     """Initialization of services required for class creations. """
-    updates = applyEnv(returnVal=True)
+    updates = applyEnv(**{'return': True})
     if isinstance(updates, list):
       return updates
 

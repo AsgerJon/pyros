@@ -3,13 +3,20 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from morevistutils.fields import apply, CustomField
 import os
+from subprocess import run, PIPE
 import sys
 from random import choice, shuffle
 
 from vistutils import maybe
 
+from dispatcher import Res
+from morevistutils import Weekday
 from pyros import RosMaster
+
+
+# from dispatcher import Res
 
 
 def tester00() -> None:
@@ -36,5 +43,15 @@ def tester02() -> None:
     print(node)
 
 
+def tester03() -> None:
+  """Cat tester"""
+
+
+def tester04() -> None:
+  """Res tester"""
+  res = Res('rosnode list')
+  print(res)
+
+
 if __name__ == '__main__':
-  tester02()
+  tester04()
