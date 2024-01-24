@@ -5,3 +5,4 @@ vistutils modules that relate to custom exceptions."""
 from __future__ import annotations
 
 from ._effort_exception import EffortException
+from ._parsing_error import ParsingError

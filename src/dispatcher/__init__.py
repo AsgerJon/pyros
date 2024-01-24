@@ -5,3 +5,4 @@ processes and to handle communication between them and the issuer. """
 from __future__ import annotations
 
 from ._res import Res
+from ._abstract_dispatcher import AbstractDispatcher

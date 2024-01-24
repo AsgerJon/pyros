@@ -4,5 +4,6 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from ._get_project_root import getProjectRoot
 from ._cat import Cat
 from ._weekday import Weekday

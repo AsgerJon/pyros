@@ -5,9 +5,12 @@ content in a more flexible manner"""
 from __future__ import annotations
 
 from subprocess import CompletedProcess, PIPE, run
-from typing import Self, Any
+from typing import Self, Any, Optional
+
+from vistutils import maybeType
 
 from morevistutils.fields import CustomField, apply
+from morevistutils.waitaminute import ParsingError
 
 
 class MetaRes(type):
@@ -65,10 +68,41 @@ class Res(metaclass=MetaRes):
     res = self.__completed_process__
     return int(res.returncode)
 
-  def __init__(self, *args, **kwargs) -> None:
+  @staticmethod
+  def parseCommands(*args, ) -> Optional[CompletedProcess]:
+    """Parses arguments to commands, runs them and returns the results"""
+    strArgs = []
+    for arg in args:
+      if isinstance(arg, str):
+        strArgs.append(arg)
+      elif isinstance(arg, bytes):
+        strArgs.append(arg.decode('utf-8'))
     cmd = ' '.join([arg for arg in args if isinstance(arg, str)])
-    self.__completed_process__ = run(
-      cmd, shell=True, stdout=PIPE, stderr=PIPE)
+    if cmd:
+      return run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+
+  @staticmethod
+  def parseCompletedProcess(*args, ) -> Optional[CompletedProcess]:
+    """Searches arguments for instance of completed process"""
+    for arg in args:
+      if isinstance(arg, CompletedProcess):
+        return arg
+
+  @classmethod
+  def parseArgs(cls, *args) -> Optional[CompletedProcess]:
+    """Parses positional arguments"""
+    res = None
+    for parse in [cls.parseCompletedProcess, cls.parseCommands]:
+      res = parse(*args)
+      if res is not None:
+        if isinstance(res, CompletedProcess):
+          return res
+    e = """Unable to parse positional arguments to commands or completed 
+    process!"""
+    raise ParsingError(e)
+
+  def __init__(self, *args, **kwargs) -> None:
+    self.__completed_process__ = self.parseArgs(*args)
 
   def __int__(self, ) -> int:
     """Return code"""

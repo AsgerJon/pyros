@@ -13,7 +13,8 @@ from vistutils import maybe
 
 from dispatcher import Res
 from morevistutils import Weekday
-from pyros import RosMaster
+from pyros import RosMaster, Talker
+from tester_class_01 import SomeClass
 
 
 # from dispatcher import Res
@@ -45,12 +46,13 @@ def tester02() -> None:
 
 def tester03() -> None:
   """Cat tester"""
+  someInstance = SomeClass()
 
 
 def tester04() -> None:
   """Res tester"""
-  res = Res('rosnode list')
-  print(res)
+  talker = Talker()
+  talker.run()
 
 
 if __name__ == '__main__':
