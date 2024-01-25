@@ -12,12 +12,7 @@ if TYPE_CHECKING:
   from rospy import Publisher, Rate, init_node
 from vistutils import maybe
 
-# import rospy
-# from rospy import Publisher, Rate, is_shutdown
-import std_msgs___
-
 from pyros import RosDispatcher
-from std_msgs___.msg import String
 
 
 @RosDispatcher()
