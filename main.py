@@ -3,18 +3,13 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from morevistutils.fields import apply, CustomField
 import os
-from subprocess import run, PIPE
 import sys
 from random import choice, shuffle
 
 from vistutils import maybe
 
-from dispatcher import Res
-from morevistutils import Weekday
 from pyros import RosMaster, Talker
-from tester_class_01 import SomeClass
 
 
 # from dispatcher import Res
@@ -46,7 +41,6 @@ def tester02() -> None:
 
 def tester03() -> None:
   """Cat tester"""
-  someInstance = SomeClass()
 
 
 def tester04() -> None:

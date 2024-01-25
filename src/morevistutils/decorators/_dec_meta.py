@@ -32,7 +32,10 @@ class DecMeta(AbstractMetaclass):
     """This implementation handles the case where the created decorator
     class is used without instantiation. Derived classes should implement
     a class method named '__class_call__' to define this behaviour. """
-
+    for (key, val) in cls.__dict__.items():
+      if callable(val) and hasattr(val, '__isabstractmethod__'):
+        if getattr(val, '__isabstractmethod__'):
+          raise TypeError('Attempted to instantiate abstract class!')
     classCall = getattr(cls, '__class_call__', None)
     if classCall is None:
       return AbstractMetaclass.__call__(cls, *args, **kwargs)

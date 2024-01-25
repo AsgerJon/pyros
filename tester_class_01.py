@@ -4,8 +4,3 @@
 from __future__ import annotations
 
 from dispatcher import AbstractDispatcher
-
-
-@AbstractDispatcher()
-class SomeClass:
-  """Some class"""

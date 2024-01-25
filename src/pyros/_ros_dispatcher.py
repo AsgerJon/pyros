@@ -5,9 +5,14 @@ copy of the code becomes available. """
 from __future__ import annotations
 
 import os
+from typing import Any
+
+from icecream import ic
 
 from dispatcher import AbstractDispatcher
 from morevistutils import getProjectRoot
+
+ic.configureOutput(includeContext=True)
 
 
 class RosDispatcher(AbstractDispatcher):
@@ -28,6 +33,8 @@ class RosDispatcher(AbstractDispatcher):
   def _getTempName(self) -> str:
     """Getter-function for the temp file name"""
     c = 0
+    ic(self._getInnerObject())
+    ic(self.__class__.__qualname__)
     fmtSpec = 'ROS_%s_%%d.py' % self._getInnerObject().__qualname__
     filePath = lambda n: os.path.join(self._getTempDir(), fmtSpec % n)
     while os.path.exists(filePath(c)):
@@ -47,7 +54,7 @@ class RosDispatcher(AbstractDispatcher):
     topic = %s()
     topic.begin()
     """
-    return [line.strip() for line in code.split('\n')]
+    return [line.strip() for line in code.split('\n') if line]
 
   def terminal(self, *args, **kwargs) -> list[str | list[str]]:
     """Subclasses must implement this method to define the terminal

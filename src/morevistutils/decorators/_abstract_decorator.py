@@ -3,6 +3,7 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from abc import abstractmethod
 from typing import Any
 
 from morevistutils.decorators import DecMeta
@@ -17,11 +18,9 @@ class AbstractDecorator(metaclass=DecMeta):
     self.__inner_args__ = None
     self.__inner_kwargs__ = None
 
+  @abstractmethod
   def _receiveInner(self, obj: Any) -> None:
     """This method sets the inner object"""
-    if self.__inner_object__ is not None:
-      raise RuntimeError
-    self.__inner_object__ = obj
 
   def _setArgs(self, *args, **kwargs) -> None:
     """Sets the argument for an upcoming call"""
@@ -44,6 +43,10 @@ class AbstractDecorator(metaclass=DecMeta):
     postArgs = self._getArgs()
     keyWordArgs = self._getKwargs()
     self._setReturnValue(inner(*postArgs, **keyWordArgs))
+
+  def _setInnerObject(self, innerObject: Any) -> None:
+    """Setter-function for inner object"""
+    self.__inner_object__ = innerObject
 
   def _getInnerObject(self) -> Any:
     """Getter-function for inner object"""

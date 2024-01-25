@@ -6,6 +6,8 @@ RosMaster class"""
 from __future__ import annotations
 
 import os
+import sys
+from platform import system
 from subprocess import run, PIPE
 from subprocess import CompletedProcess as Res
 from typing import Any
@@ -21,7 +23,9 @@ class MetaMaster(type):
   @staticmethod
   def _validate() -> Res:
     """Validates that ROS Master is reachable"""
-    return run('rosnode machine', shell=True, stdout=PIPE, stderr=PIPE)
+    if system().lower() == 'linux':
+      return run('rosnode machine', shell=True, stdout=PIPE, stderr=PIPE)
+    return run('choco --version', shell=True, stdout=PIPE, stderr=PIPE)
 
   @staticmethod
   def getReady() -> list[dict[str, str]]:

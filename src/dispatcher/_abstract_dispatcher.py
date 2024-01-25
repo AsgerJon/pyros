@@ -10,10 +10,13 @@ from abc import abstractmethod
 from time import ctime
 from typing import Any
 
+from icecream import ic
 from vistutils import monoSpace
 
 from dispatcher import Res
 from morevistutils.decorators import AbstractDecorator
+
+ic.configureOutput(includeContext=True)
 
 
 class AbstractDispatcher(AbstractDecorator):
@@ -53,23 +56,19 @@ class AbstractDispatcher(AbstractDecorator):
     tempPath = os.path.join(tempDir, tempName)
     if os.path.exists(tempPath):
       if os.path.isfile(tempPath):
-        if kwargs.get('allowOverwrite', False):
-          return tempPath
-        e = """File at path: '%s' already exists, and allowOverwrite flag 
-        is False!"""
-        raise FileExistsError(monoSpace(e % tempPath))
-      else:
-        e = """The given path: '%s' specifies a directory not a file!"""
-        raise IsADirectoryError(monoSpace(e % tempPath))
+        return tempPath
+      e = """The given path: '%s' specifies a directory not a file!"""
+      raise IsADirectoryError(monoSpace(e % tempPath))
     return tempPath
 
   def _receiveInner(self, obj: Any) -> None:
     """Reimplementation"""
-    AbstractDecorator._receiveInner(self, obj)
+    self._setInnerObject(obj)
     tempCode = self._getTempCode(obj)
     tempPath = self._validatePath()
     with open(tempPath, 'w') as f:
       f.write(tempCode)
+    self.__inner_object__ = obj
 
   @classmethod
   @abstractmethod
@@ -111,6 +110,9 @@ class AbstractDispatcher(AbstractDecorator):
 
     nameEqualMain = """if __name__ == '__main__':"""
     codeLines.append(nameEqualMain)
+    mainCode = self._getMainCode()
+    print(self.__class__.__qualname__)
+    print(mainCode)
     mainLines = [line.strip() for line in self._getMainCode()] or ['pass']
     for line in mainLines:
       codeLines.append('%s%s' % (indentation, line))
@@ -139,7 +141,6 @@ class AbstractDispatcher(AbstractDecorator):
     """AbstractDispatchers will create temporary python files. These files
     begin with a hashbang following by a comment returned by this method.
     By default, mentions the name of the class and nothing else:"""
-    return '#  test'
     maxLineLength = os.environ.get('MAX_LINE_LENGTH', 77)
     msg = """AUTO-CREATED TEMP FILE\nCreated by class: '%s' on '%s'"""
     comment = msg % (cls.__qualname__, ctime())
@@ -149,6 +150,8 @@ class AbstractDispatcher(AbstractDecorator):
     while comments:
       while len(line) + len(comments[0]) + 1 < maxLineLength - 3:
         line = '%s %s' % (line, comments.pop(0))
+        if not comments:
+          break
       lines.append('%s-<#' % line)
       line = '#>-'
     if line != '#>-':
