@@ -1,105 +1,89 @@
-"""RosTopic encapsulates the logic relating to topics in the ROS
-framework."""
+"""RosTopic"""
 #  MIT Licence
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-import os
-import time
-from typing import Optional, TYPE_CHECKING
 
-if TYPE_CHECKING:
-  from rospy import Publisher, Rate, init_node
-from vistutils import maybe
+class Topic(object):
+  """Base class of L{Publisher} and L{Subscriber}"""
 
-from pyros import RosDispatcher
+  def __init__(self, name, data_class, reg_type):
+    """
+    @param name: graph resource name of topic, e.g. 'laser'.
+    @type  name: str
+    @param data_class: message class for serialization
+    @type  data_class: L{Message}
+    @param reg_type Registration.PUB or Registration.SUB
+    @type  reg_type: str
+    @raise ValueError: if parameters are invalid
+    """
 
+    if not name or not isstring(name):
+      raise ValueError("topic name is not a non-empty string")
+    try:
+      if python3 == 1:
+        name.encode("utf-8")
+      else:
+        name = name.encode("utf-8")
+    except UnicodeError:
+      raise ValueError("topic name must be ascii/utf-8 compatible")
+    if data_class is None:
+      raise ValueError("topic parameter 'data_class' is not initialized")
+    if not type(data_class) == type:
+      raise ValueError("data_class [%s] is not a class" % data_class)
+    if not issubclass(data_class, genpy.Message):
+      raise ValueError("data_class [%s] is not a message data class" %
+                       data_class.__class__.__name__)
+    # #2202
+    if not rosgraph.names.is_legal_name(name):
+      import warnings
+      warnings.warn(
+        "'%s' is not a legal ROS graph resource name. This may cause "
+        "problems with other ROS tools" % name,
+        stacklevel=2)
 
-@RosDispatcher()
-class Talker:
-  """RosTopic encapsulates the logic relating to topics in the ROS
-  framework."""
+    # this is a bit ugly, but necessary due to the fact that we allow
+    # topics and services to be initialized before the node
+    if not rospy.core.is_initialized():
+      self.resolved_name = rospy.names.resolve_name_without_node_name(name)
+    else:
+      # init_node() has been called, so we can do normal resolution
+      self.resolved_name = resolve_name(name)
 
-  __node_name_fallback__ = 'test_node'
-  __topic_name_fallback__ = 'test_topic'
+    self.name = self.resolved_name  # #1810 for backwards compatibility
 
-  @staticmethod
-  def _parseKwargs(**kwargs) -> dict[str, Optional[str]]:
-    """Parser for keyword arguments"""
-    nodeNameKwarg = kwargs.get('nodeName', None)
-    topicNameKwarg = kwargs.get('topicName', None)
-    return dict(nodeName=nodeNameKwarg, topicName=topicNameKwarg)
+    self.data_class = data_class
+    self.type = data_class._type
+    self.md5sum = data_class._md5sum
+    self.reg_type = reg_type
+    self.impl = get_topic_manager().acquire_impl(reg_type,
+                                                 self.resolved_name,
+                                                 data_class)
 
-  @staticmethod
-  def _parseArgs(*args) -> dict[str, Optional[str]]:
-    """Parser for positional arguments"""
-    nodeNameArg, topicNameArg = None, None
-    for arg in args:
-      if isinstance(arg, bytes):
-        arg = arg.decode('utf-8')
-      if isinstance(arg, str):
-        if nodeNameArg is None:
-          nodeNameArg = arg
-        elif topicNameArg is None:
-          topicNameArg = arg
-    return dict(nodeName=nodeNameArg, topicName=topicNameArg)
+  def get_num_connections(self):
+    """
+    get the number of connections to other ROS nodes for this topic. For a
+    Publisher,
+    this corresponds to the number of nodes subscribing. For a Subscriber,
+    the number
+    of publishers.
+    @return: number of connections
+    @rtype: int
+    """
+    return self.impl.get_num_connections()
 
-  @classmethod
-  def _defaultValues(cls) -> dict[str, Optional[str]]:
-    """Collects the default values."""
-    nodeNameFallback = cls.__node_name_fallback__
-    topicNameFallback = cls.__topic_name_fallback__
-    nodeNameDefault = os.environ.get('NODE_NAME', nodeNameFallback)
-    topicNameDefault = os.environ.get('TOPIC_NAME', topicNameFallback)
-    return dict(nodeName=nodeNameDefault, topicName=topicNameDefault)
+  def unregister(self):
+    """
+    unpublish/unsubscribe from topic. Topic instance is no longer
+    valid after this call. Additional calls to unregister() have no effect.
+    """
+    # as we don't guard unregister, have to protect value of
+    # resolved_name for release_impl call
+    resolved_name = self.resolved_name
+    if resolved_name and self.impl:
+      get_topic_manager().release_impl(self.reg_type, resolved_name)
+      self.impl = self.resolved_name = self.type = self.md5sum = (
+        self).data_class = None
 
-  @classmethod
-  def _parse(cls, *args, **kwargs) -> dict[str, Optional[str]]:
-    """Parses arguments"""
-    parsedKwargs = cls._parseKwargs(**kwargs)
-    parsedArgs = cls._parseArgs(*args)
-    parsedDefaults = cls._defaultValues()
-    nodeNameKwarg = parsedKwargs.get('nodeName', None)
-    topicNameKwarg = parsedKwargs.get('topicName', None)
-    nodeNameArg = parsedArgs.get('nodeName', None)
-    topicNameArg = parsedArgs.get('topicName', None)
-    nodeNameDefault = parsedDefaults.get('nodeName', None)
-    topicNameDefault = parsedDefaults.get('topicName', None)
-    nodeName = maybe(nodeNameKwarg, nodeNameArg, nodeNameDefault)
-    topicName = maybe(topicNameKwarg, topicNameArg, topicNameDefault)
-    return dict(nodeName=nodeName, topicName=topicName)
-
-  def __init__(self, *args, **kwargs) -> None:
-    parsed = self._parse(*args, **kwargs)
-    self._nodeName = parsed.get('nodeName', )
-    self._topicName = parsed.get('topicName', )
-    self._pub = Publisher(self._topicName, String, queue_size=10)
-    self._rate = Rate(1)
-    self.__start_time__ = None
-    self.__time_limit__ = kwargs.get('timeLimit', 30)
-
-  def _createPublisher(self, ) -> None:
-    """Creator-function for the rospy publisher"""
-    init_node(self._nodeName, )
-    self._pub = Publisher(self._nodeName, )
-
-  def _getPublisher(self, **kwargs) -> Publisher:
-    """Getter-function for the rospy publisher"""
-    if self._pub is None:
-      if kwargs.get('_recursion', False):
-        raise RecursionError
-      self._createPublisher()
-      return self._getPublisher(_recursion=True)
-
-  def begin(self) -> None:
-    """Starts up the chatting"""
-    if self.__start_time__ is None:
-      self.__start_time__ = time.time()
-    elif time.time() - self.__start_time__ > self.__time_limit__:
-      return
-    message = 'Hello world!'
-    self._chatter.publish(message)
-    self._rate.sleep()
-    if is_shutdown():
-      return
-    return self.begin()
+  def __iter__(self) -> Any:
+    """blabla"""
