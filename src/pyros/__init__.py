@@ -4,5 +4,11 @@ objects as expected in Python. """
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from ._topic_type import TopicType
+from ._ros_reg import RosReg
+from ._ros_master import RosMaster
 from ._meta_ros import MetaRos
 from ._ros_node import RosNode
+from ._ros_topic import RosTopic
+from ._ros_subscriber import RosSubscriber
+from ._ros_publisher import RosPublisher

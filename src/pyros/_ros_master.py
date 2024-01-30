@@ -1,21 +1,16 @@
-"""RosMaster wraps the ROS master API"""
+"""RosMaster subclasses the MasterProxy defined in rospy"""
 #  MIT Licence
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-import os
-from typing import Any
+from rospy import MasterProxy
 
-from vistutils.fields import Field
-
-from morevistutils.fields import TypedField
+from morevistutils.fields import EnvField
 
 
-class ROSMaster:
-  """RosMaster wraps the ROS master API
-  """
-  URI = TypedField(str, os.environ.get('ROS_MASTER_URI'))
-  nodes = Field()
+class RosMaster(MasterProxy, ):
+  """RosMaster subclasses the MasterProxy defined in rospy"""
+  URI = EnvField('ROS_MASTER_URI')
 
-  def _getNodes(self) -> list:
-    """Getter-function for nodes"""
+  def __init__(self, *args, **kwargs) -> None:
+    MasterProxy.__init__(self, self.URI)

@@ -100,7 +100,6 @@ class ListField(TypedField):
       existing = self.__get__(instance, instance.__class__)
       return TypedField.__set__(self, instance, [*existing, value])
 
-  def __del__(self, instance: Any) -> None:
+  def __delete__(self, instance: Any) -> None:
     """Empties the dictionary"""
     pvtName = self._getPrivateName()
-   

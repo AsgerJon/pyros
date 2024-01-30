@@ -25,22 +25,37 @@ class TypedField(AbstractField):
 
   def __init__(self, *args, **kwargs) -> None:
     AbstractField.__init__(self, *args, **kwargs)
-    typeDict = DataType(*args, )
-    self.__field_type__ = typeDict.type
-    self.__field_default__ = typeDict.defVal
+    dataType = DataType(*args, )
+    self.__data_type__ = DataType(*args, )
+    self.__field_type__ = None
+    self.__field_default__ = None
+
+  def _getDataType(self) -> DataType:
+    """Getter-function for underlying data type"""
+    return self.__data_type__
 
   def _getPrivateName(self, ) -> str:
     """Getter-function for the private name of this field"""
     return '_%s' % self.__field_name__
 
-  def _getFieldType(self) -> type:
+  def _getFieldType(self, **kwargs) -> type:
     """Getter-function for field type"""
+    if self.__field_type__ is None:
+      if kwargs.get('_recursion', False):
+        raise RecursionError
+      self.__field_type__ = self._getDataType().getType()
+      return self._getFieldType(_recursion=True)
     if isinstance(self.__field_type__, type):
       return self.__field_type__
     raise TypeError
 
-  def _getDefaultValue(self) -> Any:
+  def _getDefaultValue(self, **kwargs) -> Any:
     """Getter-function for default value"""
+    if self.__field_default__ is None:
+      if kwargs.get('_recursion', False):
+        raise RecursionError
+      self.__field_default__ = self._getDataType().getDefault()
+      return self._getDefaultValue(_recursion=True)
     fieldType = self._getFieldType()
     if isinstance(self.__field_default__, fieldType):
       return self.__field_default__
@@ -94,9 +109,6 @@ class TypedField(AbstractField):
       raise TypeError
 
     __extra_init__ = self.__class__._extraInitFactory(owner)
-
-    # print(__extra_init__)
-    # print('self: ', getattr(__extra_init__, '__self__', 'no self'))
 
     def newInit(this, *args, **kwargs) -> None:
       """Replacement __init__"""

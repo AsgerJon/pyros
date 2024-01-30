@@ -15,4 +15,4 @@ class RosNode(metaclass=MetaRos):
   nodeName = TypedField(str, 'Test')
 
   def __init__(self, *args, **kwargs) -> None:
-    pass
+    init_node(self.nodeName)
