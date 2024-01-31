@@ -6,7 +6,7 @@ convenient hook ensuring initialization."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from rospy import MasterProxy, get_published_topics
+from rospy import get_published_topics
 from vistutils.fields import Field
 from vistutils.metas import AbstractMetaclass, Bases
 from vistutils.metas import BaseNamespace as BNS
@@ -21,12 +21,20 @@ class MetaRos(AbstractMetaclass):
   framework. This metaclass is certain to invoke its __prepare__ method
   before any of its derived classes can be created. Thus, it allows for a
   convenient hook ensuring initialization."""
+
+  __ros_spin_time__ = 100
+
   URI = EnvField('ROS_MASTER_URI')
   master = SpecialField(RosMaster)
   topics = Field()
 
+  def getFallbackSpinTime(cls) -> int:
+    """Getter-function for fallback spin time. This value is used,
+    if no value is set explicitly in the environment variables."""
+    return cls.__ros_spin_time__
+
   @master.CREATE
-  def _createRosMaster(cls, *args, **kwargs) -> MasterProxy:
+  def _createRosMaster(cls, *args, **kwargs) -> RosMaster:
     """Creator function for ros master"""
     return RosMaster(cls.URI)
 
