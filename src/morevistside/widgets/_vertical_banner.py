@@ -3,7 +3,11 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from icecream import ic
+
 from morevistside.widgets import FillWidget
+
+ic.configureOutput(includeContext=True)
 
 
 class VerticalBanner(FillWidget):
@@ -15,4 +19,5 @@ class VerticalBanner(FillWidget):
     for arg in args:
       if isinstance(arg, int) and width is None:
         height = arg
+    ic(width)
     self.setFixedWidth(width)

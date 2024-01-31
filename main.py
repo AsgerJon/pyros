@@ -6,7 +6,8 @@ from __future__ import annotations
 import os
 import sys
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMainWindow
+# from PySide6.QtWidgets import QApplication
 from icecream import ic
 from vistutils import maybe
 
@@ -22,7 +23,9 @@ def tester00() -> None:
 
 def tester01() -> None:
   """lmao"""
-  app = QApplication(sys.argv)
+  ic(sys.argv)
+  # raise RuntimeError
+  app = QApplication()
   mainWindow = MainWindow()
   mainWindow.show()
   sys.exit(app.exec_())

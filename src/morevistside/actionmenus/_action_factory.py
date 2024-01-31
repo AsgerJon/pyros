@@ -39,7 +39,7 @@ def actionFactory(*args) -> QAction:
   parent = parseParent(*args)
   strArgs = [arg for arg in args if isinstance(arg, str)]
   iconArg, icon = _parseIcon(*strArgs)
-  keyArg, shortCut = _parseIcon
+  keyArg, shortCut = _parseShortCut(*strArgs)
   text = iconArg
   for arg in strArgs:
     if arg not in [iconArg, keyArg]:

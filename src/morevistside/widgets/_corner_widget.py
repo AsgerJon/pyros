@@ -7,6 +7,7 @@ QColor to the constructor. """
 from __future__ import annotations
 
 from PySide6.QtCore import QSize
+from icecream import ic
 
 from morevistside.widgets import FillWidget
 
@@ -32,5 +33,6 @@ class CornerWidget(FillWidget):
       width, height = 32, 32
     if height is None:
       height = width
+    ic(width, height)
     size = QSize(width, height)
     self.setFixedSize(size)

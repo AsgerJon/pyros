@@ -19,20 +19,17 @@ class MenuBar(QMenuBar):
   edit = SpecialField(EditMenu)
   help = SpecialField(HelpMenu)
 
-  @classmethod
   @files.CREATE
-  def _createFilesMenu(cls, *args, **kwargs) -> FilesMenu:
-    return FilesMenu(cls, )
+  def _createFilesMenu(self, *args, **kwargs) -> FilesMenu:
+    return FilesMenu(self, )
 
-  @classmethod
   @edit.CREATE
-  def _createEditMenu(cls, *args, **kwargs) -> EditMenu:
-    return EditMenu(cls, )
+  def _createEditMenu(self, *args, **kwargs) -> EditMenu:
+    return EditMenu(self, )
 
-  @classmethod
   @help.CREATE
-  def _createHelpMenu(cls, *args, **kwargs) -> HelpMenu:
-    return HelpMenu(cls, )
+  def _createHelpMenu(self, *args, **kwargs) -> HelpMenu:
+    return HelpMenu(self, )
 
   def __init__(self, *args, **kwargs) -> None:
     parent = parseParent(*args)

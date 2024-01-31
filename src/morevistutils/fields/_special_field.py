@@ -49,20 +49,21 @@ class SpecialField(AbstractField):
     Attribute error. """
     if key == '__create_instance__':
       raise NotImplementedError(key)
-    raise AttributeError(key)
+    try:
+      return AbstractField.__getattribute__(self, key)
+    except AttributeError as attributeError:
+      raise AttributeError(key) from attributeError
 
   def __prepare_owner__(self, owner: type) -> type:
     """Subclasses must implement this method"""
-    creatorName = self._getCreatorName()
-    setattr(owner, creatorName, self._getInstanceCreator())
     return owner
 
   def __init__(self, fieldType: type, *args, **kwargs) -> None:
+    AbstractField.__init__(self, *args, **kwargs)
     if not isinstance(fieldType, type):
       e = typeMsg('fieldType', fieldType, type)
       raise TypeError(e)
     self.__field_type__ = fieldType
-    AbstractField.__init__(self, *args, **kwargs)
 
   def _getFieldType(self) -> type:
     """Getter-function for field type"""
@@ -89,18 +90,15 @@ class SpecialField(AbstractField):
 
   def _getInstanceCreator(self) -> Callable:
     """Getter-function for creator function"""
-    try:
-      return self.__create_instance__
-    except NotImplementedError:
-      fieldType, fieldOwner = self._getFieldType(), self._getFieldOwner()
-      types = [fieldType, fieldOwner]
-      names = ['__create_instance__', self._getCreatorName()]
-      for (type_, name) in zip(types, names):
-        callMeMaybe = self._searchCallable(type_, name)
-        if callMeMaybe is not None:
-          return callMeMaybe
-      if issubclass(fieldType, object):
-        return object.__new__
+    fieldType, fieldOwner = self._getFieldType(), self._getFieldOwner()
+    types = [fieldType, fieldOwner]
+    names = ['__create_instance__', self._getCreatorName()]
+    for (type_, name) in zip(types, names):
+      callMeMaybe = self._searchCallable(type_, name)
+      if callMeMaybe is not None:
+        return callMeMaybe
+    if issubclass(fieldType, object):
+      return object.__new__
 
   def CREATE(self, createFunction: Callable) -> Callable:
     """This decorator returns the function unaltered, so it should be
@@ -110,11 +108,14 @@ class SpecialField(AbstractField):
 
   def _createInstance(self, instance: Any, owner: type) -> None:
     """Creates instance"""
-    return self._getInstanceCreator()(instance, owner)
+    creator = getattr(self, '__create_instance__')
+    return creator(self)
 
   def __get__(self, instance: Any, owner: type, **kwargs) -> Any:
     """Getter-function first attempts to locate an existing instance of
     field type on instance. Next, it attempts to create it. """
+    if self.__field_name__ is None or self.__field_owner__ is None:
+      raise TypeError(self.__field_name__, self.__field_owner__, )
     if instance is None:
       return self.__get__(owner, owner, **kwargs)
     fieldName = self._getFieldName()

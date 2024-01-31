@@ -7,6 +7,7 @@ import os
 
 from PySide6.QtCore import QSize, QRect
 from PySide6.QtWidgets import QWidget
+from icecream import ic
 from vistutils import maybe
 from vistutils.fields import Field
 
@@ -29,7 +30,7 @@ class BaseWidget(QWidget):
     val = maybe(envVal, fallbackVal)
     width, height = val.split(',')
     width, height = int(width.strip()), int(height.strip())
-    return QSize(width, height)
+    return QSize(32, 32)
 
   def __init__(self, *args, **kwargs) -> None:
     parent = parseParent(*args)
