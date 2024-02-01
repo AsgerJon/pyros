@@ -6,12 +6,13 @@ from __future__ import annotations
 import os
 import sys
 
-from PySide6.QtWidgets import QApplication, QMainWindow
-# from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
 from icecream import ic
-from vistutils import maybe
+from vistutils import maybe, getProjectRoot
 
 from morevistside.windows import MainWindow
+
+ic.configureOutput(includeContext=True)
 
 
 def tester00() -> None:
@@ -23,12 +24,26 @@ def tester00() -> None:
 
 def tester01() -> None:
   """lmao"""
-  ic(sys.argv)
-  # raise RuntimeError
+
   app = QApplication()
   mainWindow = MainWindow()
   mainWindow.show()
-  sys.exit(app.exec_())
+  sys.exit(app.exec())
+
+
+def tester02() -> None:
+  """Shiboken"""
+
+  mcls = type(QWidget)
+  ic(mcls.__qualname__)
+  ic(mcls.__class__.__qualname__)
+  ic(mcls.__class__.__class__.__qualname__)
+
+  mcls = type(QWidget)
+  ic(sys.modules[mcls.__module__])
+  ic(mcls.__module__)
+  ic(mcls.__class__.__module__)
+  ic(mcls.__class__.__class__.__module__)
 
 
 if __name__ == '__main__':
