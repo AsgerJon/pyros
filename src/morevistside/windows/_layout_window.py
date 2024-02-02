@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLCDNumber
 
-from morevistside.widgets import WidgetField
+from morevistside.widgets import WidgetField, LabelWidget, PlotWidget
 from morevistside.windows import BaseWindow
 
 
@@ -18,8 +18,9 @@ class LayoutWindow(BaseWindow):
   widgets and layouts in the main application window. It is not responsible
   for connecting any signals and slots to and from the visual elements. """
 
-  helloWorld = WidgetField(QLabel, 'hello world')
+  helloWorld = WidgetField(LabelWidget, 'hello world')
   clock = WidgetField(QLCDNumber, )
+  plot = WidgetField(PlotWidget, )
 
   def __init__(self, *args, **kwargs) -> None:
     BaseWindow.__init__(self, *args, **kwargs)
@@ -30,5 +31,6 @@ class LayoutWindow(BaseWindow):
     """Sets up the widgets"""
     self.baseLayout.addWidget(self.helloWorld, 0, 0)
     self.baseLayout.addWidget(self.clock, 0, 1)
+    self.baseLayout.addWidget(self.plot, 1, 0, 1, 2)
     self.baseWidget.setLayout(self.baseLayout)
     self.setCentralWidget(self.baseWidget)

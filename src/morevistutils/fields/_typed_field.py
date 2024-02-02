@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import Any, Callable
 import sys
 from vistutils.fields import AbstractField
+from vistutils.waitaminute import typeMsg
 
 from morevistutils.fields import DataType
 
@@ -83,10 +84,13 @@ class TypedField(AbstractField):
         if arg is None:
           arg = defVal
         if isinstance(type_, type):
+          if type_ is str:
+            arg = str(arg)
           if isinstance(arg, type_):
             setattr(this, pvtName, arg)
           else:
-            raise TypeError
+            e = typeMsg('arg', arg, type_)
+            raise TypeError(e)
         else:
           raise TypeError
 
@@ -108,14 +112,14 @@ class TypedField(AbstractField):
     else:
       raise TypeError
 
-    __extra_init__ = self.__class__._extraInitFactory(owner)
-
-    def newInit(this, *args, **kwargs) -> None:
-      """Replacement __init__"""
-      __extra_init__(this, *args, **kwargs)
-      oldInit(this, *args, **kwargs)
-
-    setattr(owner, '__init__', newInit)
+    # __extra_init__ = self.__class__._extraInitFactory(owner)
+    #
+    # def newInit(this, *args, **kwargs) -> None:
+    #   """Replacement __init__"""
+    #   __extra_init__(this, *args, **kwargs)
+    #   oldInit(this, *args, **kwargs)
+    #
+    # setattr(owner, '__init__', newInit)
     clsName = self.__class__.__qualname__
     setattr(owner, self._getMemberListName(), [self, ])
     return owner
