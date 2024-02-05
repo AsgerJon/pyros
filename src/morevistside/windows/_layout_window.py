@@ -18,9 +18,9 @@ class LayoutWindow(BaseWindow):
   widgets and layouts in the main application window. It is not responsible
   for connecting any signals and slots to and from the visual elements. """
 
-  helloWorld = WidgetField(LabelWidget, 'hello world')
+  helloWorld = WidgetField(LabelWidget, 'yolo')
   clock = WidgetField(QLCDNumber, )
-  plot = WidgetField(PlotWidget, )
+  plot = WidgetField(PlotWidget, 256, 128)
 
   def __init__(self, *args, **kwargs) -> None:
     BaseWindow.__init__(self, *args, **kwargs)

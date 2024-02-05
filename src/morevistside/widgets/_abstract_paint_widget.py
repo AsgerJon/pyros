@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import sys
 from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QSize
 from PySide6.QtGui import QPaintEvent, QPainter
 from vistutils.fields import Field
 
@@ -43,6 +45,7 @@ class AbstractPaintWidget(BaseWidget):
   def paintEvent(self, event: QPaintEvent) -> None:
     """Implementation of painting. Subclasses should not need to implement
     this method. """
+    self._applyMinSize()
     for layer in self.layers:
       painter = QPainter()
       painter.begin(self)
@@ -53,3 +56,7 @@ class AbstractPaintWidget(BaseWidget):
         print(e)
         return painter.end()
       painter.end()
+
+  def _getMinSize(self) -> QSize:
+    """Getter-function available for subclasses"""
+    return BaseWidget._getMinSize(self)

@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter, QPen, QColor
+from PySide6.QtCore import Qt, QRect, QSize, QPoint
+from PySide6.QtGui import QPainter, QPen, QColor, QFontMetrics
 from vistutils import maybeType, maybe
 from vistutils.waitaminute import typeMsg
 
@@ -18,6 +18,7 @@ class TextLayer(AbstractPaintLayer):
 
   def __init__(self, *args, **kwargs) -> None:
     AbstractPaintLayer.__init__(self, *args, **kwargs)
+    self.__font_metrics__ = None
     self._font = kwargs.get('font', None)
     if self._font is None:
       self._font = self._parseFont(*args)
@@ -51,7 +52,7 @@ class TextLayer(AbstractPaintLayer):
     painter.setPen(fontPen)
     viewRect = painter.viewport()
     flags = self._flags
-    text = instance.text
+    text = self._text
     textRect = painter.boundingRect(viewRect, flags, text)
     painter.drawText(textRect, flags, text)
 
@@ -59,3 +60,27 @@ class TextLayer(AbstractPaintLayer):
     """Setter function changes the text shown"""
     if isinstance(value, str):
       instance.text = value
+
+  def _createFontMetrics(self) -> None:
+    """Creator-function for font metrics"""
+    self.__font_metrics__ = QFontMetrics(self._font)
+
+  def _getFontMetrics(self, **kwargs) -> QFontMetrics:
+    """Getter-function for font metrics"""
+    if self.__font_metrics__ is None:
+      if kwargs.get('_recursion', False):
+        raise RecursionError
+      self._createFontMetrics()
+      return self._getFontMetrics(_recursion=True)
+    return self.__font_metrics__
+
+  def getBoundingRect(self) -> QRect:
+    """Getter-function for the bounding rectangle required to bound the
+    given text"""
+    fontMetrics = self._getFontMetrics()
+    return fontMetrics.boundingRect(self._text, )
+
+  def getBoundingSize(self) -> QSize:
+    """Getter-function for the size of the bounding rectangle required to
+    bound the given text."""
+    return self.getBoundingRect().size()

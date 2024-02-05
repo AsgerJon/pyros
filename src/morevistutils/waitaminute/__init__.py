@@ -4,3 +4,4 @@
 from __future__ import annotations
 
 from ._wait_for_it import WaitForIt
+from ._type_msg import typeMsg

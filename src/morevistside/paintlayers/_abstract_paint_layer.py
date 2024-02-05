@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import warnings
 from abc import abstractmethod
-from typing import Optional, Never
+from typing import Optional, Never, Callable
 
 from icecream import ic
 from vistutils import monoSpace
 from vistutils.fields import AbstractField, Field
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QColor, QPainterPath, QPaintDevice
 from PySide6.QtGui import QPen, QFont, QBrush
 from PySide6.QtGui import QPainter
@@ -100,35 +100,31 @@ class AbstractPaintLayer(AbstractField):
     """Uses parent method"""
     return self._getPrivateName()
 
-  @staticmethod
-  def _validatePath(painterPath: QPainterPath) -> QPainterPath:
-    """Validates that given argument is an actual painter path"""
-    if isinstance(painterPath, QPainterPath):
-      return painterPath
-    e = typeMsg('painterPath', painterPath, QPainterPath)
-    raise TypeError(e)
-
   def __init__(self, *args, **kwargs) -> None:
     AbstractField.__init__(self, *args, **kwargs)
 
-  def _findValue(self, instance: QPaintDevice) -> Optional[QPainterPath]:
+  def _findValue(self, instance: QPaintDevice) -> Callable:
     """Locates an instance at given instance"""
     if hasattr(instance, self._pvtName):
-      painterPath = getattr(instance, self._pvtName)
-      return self._validatePath(painterPath)
+      painterHandle = getattr(instance, self._pvtName)
+      if callable(painterHandle):
+        return painterHandle
+      e = typeMsg('painterHandle', painterHandle, Callable)
+      raise TypeError(e)
 
   def __get__(self,
               instance: QPaintDevice,
               owner: ShibokenType,
-              **kwargs) -> QPainterPath:
+              **kwargs) -> Callable:
     """Returns a path appropriate for given instance."""
     if instance is None:
       e = """Cannot create path on class: '%s', only on instance hereof!"""
       raise TypeError(monoSpace(e % owner.__qualname__))
     existing = self._findValue(instance, )
     if existing is None:
-      setattr(instance, self._pvtName, self.paintMeLike(instance))
+      setattr(instance, self._pvtName, self.paintMeLike)
       return self.__get__(instance, owner, _recursion=True, **kwargs)
+    return existing
 
   def __set__(self, *_) -> Never:
     """Illegal accessor!"""
@@ -151,5 +147,4 @@ class AbstractPaintLayer(AbstractField):
       e = typeMsg('owner', owner, ShibokenType)
       raise TypeError(e)
     owner.layers.append(self)
-    ic(owner)
     return owner
