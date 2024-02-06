@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QPointF
 
-from morevistside.paintpaths import ParameterPath, CanvasPath
+from deprecated.paintpaths import ParameterPath, CanvasPath
 
 
 class DiagonalPath(ParameterPath):

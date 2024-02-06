@@ -11,7 +11,6 @@ from typing import Any, Callable
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QPaintEvent, QPen, QColor, QBrush
-from PySide6.QtWidgets import QWidget
 from vistutils.fields import AbstractField
 
 from morevistside import shibokinator
@@ -37,13 +36,14 @@ class AbstractStencil(AbstractField):
     return owner
 
   def __getattribute__(self, key: str) -> Any:
-    """Implementation of this method was done by a seasoned professional
+    """Reimplementation of this method was done by a seasoned professional
     in safe conditions. Do not try this at home!"""
     accessorNames = ['__get__', '__set__', '__delete__']
-    for name in accessorNames:
-      if key == name:
-        object.__getattribute__(self, key)()
-        break
+    notifyNames = ['__notify_get__', '__notify_set__', '__notify_del__']
+    for (accessorName, notifyName) in zip(accessorNames, notifyNames):
+      if key == accessorName:
+        notifier = object.__getattribute__(self, notifyName)
+        notifier()
     return object.__getattribute__(self, key)
 
   def __init__(self, *args, **kwargs) -> None:

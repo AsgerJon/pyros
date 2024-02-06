@@ -6,20 +6,14 @@ from __future__ import annotations
 from PySide6.QtWidgets import QStatusBar, QLabel
 
 from morevistside import parseParent
+from morevistside.widgets import WidgetField, LabelWidget
 from morevistutils.fields import SpecialField
 
 
 class StatusBar(QStatusBar):
   """StatusBar subclasses QStatusBar """
 
-  label = SpecialField(QLabel)
-
-  @label.CREATE
-  def _createLabel(self, *args, **kwargs) -> QLabel:
-    """Creator function for status bar label widget"""
-    widget = QLabel(self, )
-    widget.setText('Welcome!')
-    return widget
+  label = WidgetField(LabelWidget, 'Welcome to Qt!', '#666666FF', )
 
   def __init__(self, *args, **kwargs) -> None:
     parent = parseParent(*args)

@@ -9,7 +9,7 @@ from abc import abstractmethod
 
 from PySide6.QtGui import QPainterPath
 
-from morevistside.paintpaths import CanvasPath
+from deprecated.paintpaths import CanvasPath
 
 
 class ParameterPath(QPainterPath):

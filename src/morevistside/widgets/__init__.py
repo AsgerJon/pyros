@@ -4,8 +4,7 @@
 from __future__ import annotations
 
 from ._base_widget import BaseWidget
-from ._widget_field import WidgetField
-
-from ._abstract_paint_widget import AbstractPaintWidget
+from ._paint_widget import PaintWidget
 from ._label_widget import LabelWidget
 from ._plot_widget import PlotWidget
+from ._widget_field import WidgetField

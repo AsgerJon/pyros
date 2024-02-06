@@ -5,13 +5,13 @@ actions."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import os
 from abc import abstractmethod
 
 from PySide6.QtWidgets import QMainWindow
 
 from morevistside import parseParent
-from morevistside.actionmenus import MenuBar, StatusBar
-from morevistutils.fields import SpecialField
+from morevistside.actionmenus import MenuBar
 
 
 class BaseWindow(QMainWindow):
@@ -19,24 +19,22 @@ class BaseWindow(QMainWindow):
   window. It inherits directly from QMainWindow and organizes menus and
   actions."""
 
-  mainMenuBar = SpecialField(MenuBar)
-  mainStatusBar = SpecialField(StatusBar)
-
-  @mainMenuBar.CREATE
-  def _createMainMenuBar(self, *args, **kwargs) -> MenuBar:
-    """Creator function for main menubar"""
-    return MenuBar(self, )
-
-  @mainStatusBar.CREATE
-  def _createMainStatusBar(self, *args, **kwargs) -> StatusBar:
-    """Creator function for statusbar"""
-    return StatusBar(self, )
+  @staticmethod
+  def _getWindowTitle() -> str:
+    """Getter-function for window title"""
+    return os.environ.get('WINDOW_TITLE', 'Main Window')
 
   def __init__(self, *args, **kwargs) -> None:
     parent = parseParent(*args)
+    self.__menu_bar__ = None
     QMainWindow.__init__(self, parent)
-    self.setMenuBar(self.mainMenuBar)
-    self.setStatusBar(self.mainStatusBar)
+    self.setWindowTitle(self._getWindowTitle())
+    self.setupMenuBar()
+
+  def setupMenuBar(self, ) -> None:
+    """Sets up the menu bar"""
+    self.__menu_bar__ = MenuBar(self)
+    self.setMenuBar(self.__menu_bar__)
 
   @abstractmethod
   def initUI(self) -> None:

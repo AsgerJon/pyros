@@ -16,4 +16,8 @@ class EZMeta(AbstractMetaclass):
   @classmethod
   def __prepare__(mcls, name: str, bases: Bases, **kwargs) -> EZSpace:
     """Creates the namespace object"""
-    raise NotImplementedError
+    return EZSpace(mcls, name, bases, **kwargs)
+
+  def __new__(mcls, name: str, bases: Bases, namespace: EZSpace,
+              **kwargs) -> type:
+    """Creates the dataclass"""

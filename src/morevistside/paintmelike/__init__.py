@@ -10,3 +10,5 @@ from ._abstract_stencil import AbstractStencil
 from ._color_descriptor import ColorDescriptor
 from ._solid_background import SolidBackground
 from ._text_descriptor import TextDescriptor
+from ._font_descriptor import FontDescriptor
+from ._text_label import TextLabel

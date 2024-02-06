@@ -6,7 +6,7 @@ from __future__ import annotations
 from PySide6.QtCore import Qt, QPointF, QLineF
 from PySide6.QtGui import QPen, QColor, QPainter
 
-from morevistside.paintlayers import AbstractPaintLayer
+from deprecated.paintlayers import AbstractPaintLayer
 
 
 class AxesLayer(AbstractPaintLayer):

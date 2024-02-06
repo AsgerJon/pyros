@@ -7,7 +7,7 @@ from __future__ import annotations
 from PySide6.QtGui import QPainter
 from icecream import ic
 
-from morevistside.paintlayers import AbstractPaintLayer
+from deprecated.paintlayers import AbstractPaintLayer
 
 ic.configureOutput(includeContext=True)
 
@@ -19,7 +19,7 @@ class SolidLayer(AbstractPaintLayer):
   def __init__(self, *args, **kwargs) -> None:
     AbstractPaintLayer.__init__(self, *args, **kwargs)
     self._brush = self._parseBrush(*args)
-    
+
   def paintMeLike(self, painter: QPainter) -> None:
     """Before the painter draws this path, this method is called on the
     painter. This allows subclasses to make changes to the painter before

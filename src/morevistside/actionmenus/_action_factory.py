@@ -1,50 +1,25 @@
-"""The actionFactory function creates a named action including icon"""
+"""The actionFactory creates named instances of QAction"""
 #  MIT Licence
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from PySide6.QtGui import QAction, QKeySequence, QPixmap, QIcon
+from PySide6.QtGui import QAction, QKeySequence
 
-from morevistside import parseParent
-from morevistside.actionmenus import getFids
-
-
-def _parseIcon(*args) -> tuple:
-  """Parses icon"""
-  names = getFids()
-  for arg in args:
-    if isinstance(arg, QPixmap):
-      return QIcon(arg)
-    if isinstance(arg, QIcon):
-      return arg
-    if arg in names:
-      return arg, QIcon(QPixmap(names.get(arg)))
-  return None, None
+from morevistside.actionmenus import getIcon
+from morevistutils.waitaminute import typeMsg
 
 
-def _parseShortCut(*args) -> tuple:
-  """Parses keyboard shortcut"""
-  for arg in args:
-    if isinstance(arg, QKeySequence):
-      return arg
-    if isinstance(arg, str):
-      test = QKeySequence(arg)
-      if test.count() and test.toString():
-        return arg, test
-  return None, None
+def actionFactory(name: str, shortCut: str = None) -> QAction:
+  """The actionFactory creates named instances of QAction"""
 
-
-def actionFactory(*args) -> QAction:
-  """The actionFactory function creates a named action including icon"""
-  parent = parseParent(*args)
-  strArgs = [arg for arg in args if isinstance(arg, str)]
-  iconArg, icon = _parseIcon(*strArgs)
-  keyArg, shortCut = _parseShortCut(*strArgs)
-  text = iconArg
-  for arg in strArgs:
-    if arg not in [iconArg, keyArg]:
-      text = arg
-  action = QAction(icon, text, parent)
+  icon = getIcon(name, )
+  keyCombination = None
   if shortCut is not None:
-    action.setShortcut(shortCut)
+    if isinstance(shortCut, str):
+      keyCombination = QKeySequence(shortCut)
+    else:
+      e = typeMsg('shortCut', shortCut, str)
+      raise TypeError(e)
+  action = QAction(icon, name, )
+  action.setShortcut(keyCombination)
   return action

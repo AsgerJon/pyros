@@ -6,9 +6,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from icecream import ic
 from vistutils import maybe, monoSpace
 
 from morevistside.paintmelike import AbstractStencil
+from morevistutils import maybeType
 from morevistutils.waitaminute import typeMsg
 
 
@@ -18,13 +20,16 @@ class TextDescriptor(AbstractStencil):
 
   __default_value__ = 'hello world!'
 
-  @classmethod
-  def __get_default_value__(cls, owner: type = None) -> str:
+  def __init__(self, *args, **kwargs) -> None:
+    AbstractStencil.__init__(self, *args, **kwargs)
+    self.__default_value__ = maybeType(str, *args)
+
+  def __get_default_value__(self, owner: type = None) -> str:
     """Getter-function for the default value"""
     if owner is None:
-      return getattr(cls, '__default_value__', None)
+      return getattr(self, '__default_value__', None)
     ownerDefault = getattr(owner, '__default_value__', None)
-    descriptorDefault = getattr(cls, '__default_value__', None)
+    descriptorDefault = getattr(self, '__default_value__', None)
     defVal = maybe(ownerDefault, descriptorDefault)
     if isinstance(defVal, str):
       return defVal

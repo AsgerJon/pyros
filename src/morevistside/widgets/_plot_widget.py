@@ -6,17 +6,15 @@ from __future__ import annotations
 
 from PySide6.QtGui import QColor
 
-from morevistside import parseParent
-from morevistside.paintlayers import AxesLayer, SolidLayer
-from morevistside.widgets import AbstractPaintWidget
+from morevistside.paintmelike import SolidBackground
+from morevistside.widgets import PaintWidget
 
 
-class PlotWidget(AbstractPaintWidget):
+class PlotWidget(PaintWidget):
   """PlotWidget provides a visual representation of a numerically defined
   field."""
 
-  fill = SolidLayer(QColor(127, 255, 0, 255))
-  axes = AxesLayer()
+  fill = SolidBackground(QColor(255, 255, 0, 255))
 
   def __init__(self, *args, **kwargs) -> None:
-    AbstractPaintWidget.__init__(self, *args, **kwargs)
+    PaintWidget.__init__(self, *args, **kwargs)

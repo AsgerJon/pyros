@@ -8,16 +8,17 @@ import subprocess
 import sys
 
 from PySide6.QtCore import Signal
-from PySide6.QtGui import QPainterPath
+from PySide6.QtGui import QPainterPath, QImage
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 from icecream import ic
-from vistutils import maybe
+from vistutils import maybe, getProjectRoot
 import shiboken6
 from shiboken6.Shiboken import Object
 
 from morevistside import shibokinator, parseHex
+from morevistside.actionmenus import convertImage
 from morevistside.windows import MainWindow
-from tester_class_02 import Champ
+from tester_class_02 import SomeClass
 
 ic.configureOutput(includeContext=True)
 
@@ -69,21 +70,6 @@ def tester03() -> None:
 def tester04() -> None:
   """lmao"""
 
-  ObjectType = QWidget.__class__
-  ic(ObjectType)
-
-  champ = Champ()
-  # print(Champ)
-  # print(champ)
-  print(type(QWidget))
-  print(shiboken6.Shiboken)
-  for item in dir(shiboken6.Shiboken):
-    print(item)
-  out = []
-  for (key, val) in type(QWidget).__dict__.items():
-    out.append('%s: %s' % (key, type(val)))
-  print('\n'.join(out))
-
 
 def tester05() -> None:
   """yolo"""
@@ -99,6 +85,24 @@ def tester06() -> None:
   print(parseHex(lol))
   print(sys.version_info)
   subprocess.run('mamba env export > environment.yml', shell=True, )
+
+
+def tester07() -> None:
+  """YOLO"""
+  someInstance = SomeClass()
+  namespace = getattr(SomeClass, '__namespace_object__')
+  for (key, val) in namespace.getAnnotations().items():
+    print(key, val)
+
+
+def tester08() -> None:
+  """Image conversion test"""
+  root = getProjectRoot()
+  there = os.path.join(root, 'src', 'morevistside', 'actionmenus', 'icons')
+  srcName = 'help-icon-png-0.jpg'
+  filePath = os.path.join(there, srcName)
+  outPath = os.path.join(there, 'help_menu.png')
+  convertImage(filePath, outPath, 'PNG')
 
 
 if __name__ == '__main__':

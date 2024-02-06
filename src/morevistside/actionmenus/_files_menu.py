@@ -5,32 +5,31 @@ from __future__ import annotations
 
 from vistutils import stringList
 
-from morevistside.actionmenus import AbstractMenu, actionFactory
+from morevistside.actionmenus import AbstractMenu
 
 
 class FilesMenu(AbstractMenu):
   """The FilesMenu subclasses AbstractMenu."""
 
-  __action_names__ = stringList("""new, open, save, saveAs, exit""")
+  __action_names__ = stringList("""new, open, save, save_as, exit""")
   __action_keys__ = stringList("""CTRL+N, CTRL+O, CTRL+S, CTRL+SHIFT+S, 
   ALT+F4""")
+  __action_text__ = stringList("""New, Open, Save, Save As, EXIT""")
 
   @classmethod
-  def _getNames(cls) -> list:
+  def getNames(cls) -> list:
     """Getter-function for list of names"""
     return cls.__action_names__
 
   @classmethod
-  def _getKeys(cls) -> list:
+  def getShortcuts(cls) -> list:
     """Getter-function for list of keyboard shortcuts"""
     return cls.__action_keys__
 
+  @classmethod
+  def getText(cls) -> list[str]:
+    """Getter-function for the list of descriptions"""
+    return cls.__action_text__
+
   def __init__(self, *args, **kwargs) -> None:
     AbstractMenu.__init__(self, *args, **kwargs)
-    self.__menu_actions__ = []
-    for (name, keys) in zip(self._getNames(), self._getKeys()):
-      self.__menu_actions__.append(actionFactory(name, self, keys))
-
-  def getActions(self) -> list:
-    """Getter-function for actions in this menu"""
-    return self.__menu_actions__

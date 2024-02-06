@@ -23,8 +23,8 @@ class WidgetField(AbstractField):
       return widgetType
     if issubclass(widgetType, QWidget):
       return widgetType
-    e = """Expected subclass of QWidget, but received: '%s' % QWidget"""
-    raise TypeError(e)
+    e = """Expected subclass of QWidget, but received: '%s'"""
+    raise TypeError(e % widgetType.__qualname__)
 
   def __init__(self, widgetType: type, *args, **kwargs) -> None:
     AbstractField.__init__(self, *args, **kwargs)

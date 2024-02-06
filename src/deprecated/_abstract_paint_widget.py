@@ -5,7 +5,6 @@ layers. Subclasses should place layers at the top of the class body."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-import sys
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QSize
@@ -15,7 +14,7 @@ from vistutils.fields import Field
 from morevistside.widgets import BaseWidget
 
 if TYPE_CHECKING:
-  from morevistside.paintlayers import AbstractPaintLayer
+  from deprecated.paintlayers import AbstractPaintLayer
 
 
 class AbstractPaintWidget(BaseWidget):

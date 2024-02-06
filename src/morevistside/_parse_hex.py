@@ -58,6 +58,14 @@ def parseHex(hexColor: Any) -> QColor:
   """Parses hex color"""
   if isinstance(hexColor, QColor):
     return hexColor
-  hexChars = _splitHex(hexColor)
+  if not isinstance(hexColor, str):
+    raise TypeError
+  try:
+    hexChars = _splitHex(hexColor)
+  except ValueError as valueError:
+    color = QColor(hexColor)
+    if color is None:
+      raise valueError
+    return color
   rgba = [_parseByte(chars) for chars in hexChars]
   return QColor(*rgba)

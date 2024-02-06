@@ -5,12 +5,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from PySide6.QtCore import Qt, QRect, QSize, QPoint
+from PySide6.QtCore import Qt, QRect, QSize
 from PySide6.QtGui import QPainter, QPen, QColor, QFontMetrics
 from vistutils import maybeType, maybe
 from vistutils.waitaminute import typeMsg
 
-from morevistside.paintlayers import AbstractPaintLayer
+from deprecated.paintlayers import AbstractPaintLayer
 
 
 class TextLayer(AbstractPaintLayer):
