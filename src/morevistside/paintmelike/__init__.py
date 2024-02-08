@@ -12,3 +12,5 @@ from ._solid_background import SolidBackground
 from ._text_descriptor import TextDescriptor
 from ._font_descriptor import FontDescriptor
 from ._text_label import TextLabel
+from ._plot_window import PlotWindow
+from ._data_plot import DataPlot

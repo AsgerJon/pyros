@@ -27,9 +27,6 @@ class MenuBar(QMenuBar):
 
   def __init__(self, *args, **kwargs) -> None:
     parent = parseParent(*args)
-    if parent is None:
-      e = """Unable to parse parent widget!"""
-      raise TypeError(e)
     QMenuBar.__init__(self, parent)
     self.__files_menu__ = None
     self.__edit_menu__ = None

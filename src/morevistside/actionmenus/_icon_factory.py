@@ -8,18 +8,34 @@ import os
 from typing import Optional
 
 from PySide6.QtGui import QPixmap, QIcon
+from icecream import ic
+from vistutils import getProjectRoot
 from vistutils.waitaminute import typeMsg
+
+ic.configureOutput(includeContext=True)
+
+
+def _fixCase(name: str) -> str:
+  """Returns the name with the capitalization fixed"""
+  out = []
+  for char in name:
+    if char.isupper():
+      out.append('_%s' % char.lower())
+    else:
+      out.append(char)
+  return ''.join(out)
 
 
 def getFids() -> dict[str, str]:
   """Getter-function for name: icon file"""
-  here = os.path.dirname(__file__)
-  there = os.path.join(here, 'icons')
+  root = getProjectRoot()
+  there = os.path.join(root, 'src', 'morevistside', 'actionmenus', 'icons')
+  ic(there)
   data = {}
   for item in os.listdir(there):
     base = os.path.basename(item)
     name = os.path.splitext(base)[0]
-    fid = os.path.normpath(os.path.abspath(item))
+    fid = os.path.normpath(os.path.join(there, item))
     data[name] = fid
   return data
 
@@ -42,4 +58,4 @@ def getPix(name: str, **kwargs) -> QPixmap:
 
 def getIcon(name: str, **kwargs) -> Optional[QIcon]:
   """Returns the QPixmap representation of the named icon"""
-  return QIcon(getPix(name))
+  return QIcon(getPix(_fixCase(name)))

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from PySide6.QtGui import QColor
 
-from morevistside.paintmelike import SolidBackground
+from morevistside.paintmelike import SolidBackground, DataPlot
 from morevistside.widgets import PaintWidget
 
 
@@ -15,6 +15,7 @@ class PlotWidget(PaintWidget):
   field."""
 
   fill = SolidBackground(QColor(255, 255, 0, 255))
+  dataPlot = DataPlot()
 
   def __init__(self, *args, **kwargs) -> None:
     PaintWidget.__init__(self, *args, **kwargs)

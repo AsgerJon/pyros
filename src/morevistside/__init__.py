@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from ._types import *
+from ._resize_filter import ResizeFilter
 from ._parse_parent import parseParent
 from ._shibokinator import shibokinator
 from ._parse_hex import parseHex

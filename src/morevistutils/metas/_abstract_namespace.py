@@ -38,6 +38,10 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Any
 
+from icecream import ic
+
+ic.configureOutput(includeContext=True)
+
 
 class AbstractNamespace(dict):
   """AbstractNameSpace an abstract baseclass for custom namespace classes
@@ -82,6 +86,7 @@ used in custom metaclasses."""
     for item in self.getLog():
       if item['key'] == '__annotations__' and item['acc'] == 'set':
         return item['val']
+    return {}
 
   def getLog(self) -> list:
     """Getter-function for creation log"""

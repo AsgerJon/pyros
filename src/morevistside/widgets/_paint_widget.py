@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 from PySide6.QtGui import QPaintEvent, QPainter
+from icecream import ic
 
 from morevistside.paintmelike import AbstractStencil
 from morevistside.widgets import BaseWidget
+
+ic.configureOutput(includeContext=True)
 
 
 class PaintWidget(BaseWidget):

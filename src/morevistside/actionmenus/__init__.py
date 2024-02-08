@@ -10,5 +10,6 @@ from ._abstract_menu import AbstractMenu
 from ._files_menu import FilesMenu
 from ._edit_menu import EditMenu
 from ._help_menu import HelpMenu
+from ._debug_menu import DebugMenu
 from ._menu_bar import MenuBar
 from ._status_bar import StatusBar

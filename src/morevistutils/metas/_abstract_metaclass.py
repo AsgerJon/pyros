@@ -11,7 +11,7 @@ very difficult to find. Nevertheless, some advanced behaviour does require
 reimplementation of other methods in this class. Such as when controlling
 the creation of instances of the new class.
 
-Thanks for reading to the end of this documentation!
+Thank you for reading to the end of this documentation!
 
 .
 
@@ -21,8 +21,7 @@ custom class as the namespace object, you acknowledge that:
   - You are on your own. ChatGPT will not help you here.
   - Highly undefined behaviour is likely.
   - There are no dragons here. Anymore.
-  - [REDACTED COGNITO HAZARD]
-"""
+  - [REDACTED COGNITO HAZARD]"""
 #  MIT Licence
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations

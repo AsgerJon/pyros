@@ -1,4 +1,4 @@
-"""The FilesMenu subclasses AbstractMenu."""
+"""DebugMenu provides a menu of customizable actions"""
 #  MIT Licence
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
@@ -8,13 +8,12 @@ from vistutils import stringList
 from morevistside.actionmenus import AbstractMenu
 
 
-class FilesMenu(AbstractMenu):
-  """The FilesMenu subclasses AbstractMenu."""
+class DebugMenu(AbstractMenu):
+  """DebugMenu provides a menu of customizable actions"""
 
-  __action_names__ = stringList("""new, open, save, saveAs, exit""")
-  __action_keys__ = stringList("""CTRL+N, CTRL+O, CTRL+S, CTRL+SHIFT+S, 
-  ALT+F4""")
-  __action_text__ = stringList("""New, Open, Save, Save As, EXIT""")
+  __action_names__ = ['debug%02d' % i for i in range(10) if i]
+  __action_keys__ = ['F%d' % i for i in range(10) if i]
+  __action_text__ = ['--<DEBUG>-- %02d' % i for i in range(10) if i]
 
   @classmethod
   def getNames(cls) -> list:
@@ -32,4 +31,4 @@ class FilesMenu(AbstractMenu):
     return cls.__action_text__
 
   def __init__(self, *args, **kwargs) -> None:
-    AbstractMenu.__init__(self, *args, **kwargs)
+    AbstractMenu.__init__(self, *args, icon='debug', **kwargs)

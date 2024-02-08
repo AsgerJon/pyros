@@ -3,12 +3,19 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from typing import Any
+
 from PySide6.QtGui import QColor
+from icecream import ic
+from rospy import Publisher, Subscriber
 
 from morevistside import parseHex
 from morevistside.paintmelike import SolidBackground, TextLabel
 from morevistside.widgets import PaintWidget
 from morevistutils.waitaminute import typeMsg
+from yolomsg import Float32Stamped
+
+ic.configureOutput(includeContext=True)
 
 
 class LabelWidget(PaintWidget):
@@ -39,3 +46,8 @@ class LabelWidget(PaintWidget):
         e = typeMsg('defaultText', defaultText, QColor)
         raise TypeError(e)
       self.fill = defaultColor
+
+  def textCallback(self, data: Any) -> None:
+    """Callback test"""
+    self.text = '%.3E' % data.data
+    self.update()

@@ -4,7 +4,13 @@ to create the EZData class."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import builtins
+
+from icecream import ic
+
 from morevistutils.metas import BaseNamespace
+
+ic.configureOutput(includeContext=True)
 
 
 class EZSpace(BaseNamespace):
@@ -14,7 +20,11 @@ class EZSpace(BaseNamespace):
   @staticmethod
   def _getGlobals() -> dict:
     """Getter-function for globals"""
-    return {**globals(), }
+    base = {}
+    for (key, val) in builtins.__dict__.items():
+      if isinstance(val, type):
+        base |= {key: val}
+    return {**globals(), **base}
 
   def getCallables(self) -> dict:
     """Getter-function for the dictionary containing the functions"""
@@ -27,6 +37,8 @@ class EZSpace(BaseNamespace):
   @classmethod
   def resolveType(cls, typeName: str) -> type:
     """Resolves the name to the type"""
+    if isinstance(typeName, type):
+      return typeName
     type_ = cls._getGlobals().get(typeName, None)
     if type_ is None:
       raise NameError(typeName)
@@ -34,9 +46,11 @@ class EZSpace(BaseNamespace):
       return type_
     raise TypeError(typeName)
 
-  def compile(self) -> dict:
-    """Collects annotations and callables"""
+  def getAnnotations(self) -> dict:
+    """Getter-function for annotations."""
     out = {}
-    for (key, val) in self.getAnnotations().items():
+    annotations_ = BaseNamespace.getAnnotations(self)
+
+    for (key, val) in annotations_.items():
       out |= {key: self.resolveType(val)}
-    return {**out, **self.getCallables()}
+    return out
