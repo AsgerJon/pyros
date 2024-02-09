@@ -11,9 +11,9 @@ from morevistside.actionmenus import AbstractMenu
 class DebugMenu(AbstractMenu):
   """DebugMenu provides a menu of customizable actions"""
 
-  __action_names__ = ['debug%02d' % i for i in range(10) if i]
-  __action_keys__ = ['F%d' % i for i in range(10) if i]
-  __action_text__ = ['--<DEBUG>-- %02d' % i for i in range(10) if i]
+  __action_names__ = ['debug%02d' % i for i in range(13) if i]
+  __action_keys__ = ['F%d' % i for i in range(13) if i]
+  __action_text__ = ['--<DEBUG>-- %02d' % i for i in range(13) if i]
 
   @classmethod
   def getNames(cls) -> list:

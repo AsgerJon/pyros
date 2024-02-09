@@ -34,6 +34,8 @@ class EZField(AbstractField):
 
   def __prepare_owner__(self, owner: type) -> type:
     """Implementation of the abstract method"""
+    existing = getattr(owner, '__ez_fields__', [])
+    setattr(owner, '__ez_fields__', [*existing, self])
     return owner
 
   def __prepare_instance__(self, instance: Any) -> Any:
@@ -41,8 +43,9 @@ class EZField(AbstractField):
     pvtName = self._getPrivateName()
     defVal = self.__default_value__
     if defVal is None:
-      e = """Instance of '%s' was not created with default value!"""
-      raise ValueError(monoSpace(e % self.__class__.__qualname__))
+      defVal = self.__value_type__()
+      # e = """Instance of '%s' was not created with default value!"""
+      # raise ValueError(monoSpace(e % self.__class__.__qualname__))
     setattr(instance, pvtName, self.__default_value__)
 
   def __get__(self, instance: Any, owner: type, **kwargs) -> Any:
@@ -62,11 +65,46 @@ class EZField(AbstractField):
   def __set__(self, instance: Any, value: Any) -> None:
     """Setter-function"""
     pvtName = self._getPrivateName()
-    if isinstance(value, self.__value_type__):
-      return setattr(instance, pvtName, value)
-    e = typeMsg('value', value, self.__value_type__)
-    raise TypeError(e)
+    try:
+      setattr(instance, pvtName, self._typeGuard(value))
+    except TypeError as typeError:
+      e = typeMsg('value', value, self.__value_type__)
+      raise TypeError(e) from typeError
 
   def __delete__(self, instance: Any) -> None:
     """Deleter function"""
     delattr(instance, self._getPrivateName())
+
+  def _typeGuard(self, value: Any) -> Any:
+    """Converts value to match field value type"""
+    if self.__value_type__ not in [int, float, complex]:
+      if isinstance(value, self.__value_type__):
+        return value
+      e = typeMsg('value', value, self.__value_type__)
+      raise TypeError(e)
+    if type(value) in [int, float, complex]:
+      if self.__value_type__ is type(value):
+        return value
+      if self.__value_type__ is int:
+        if type(value) is float:
+          if (round(value) - value) ** 2 < 1e-08:
+            return int(value)
+          raise TypeError
+        if type(value) is complex:
+          if value.imag ** 2 < 1e-08:
+            return int(value.real)
+          if value.real ** 2 < 1e-08:
+            return int(value.imag)
+          raise TypeError
+      if self.__value_type__ is float:
+        if type(value) is complex:
+          if value.imag ** 2 < 1e-08:
+            return value.real
+          if value.real ** 2 < 1e-08:
+            return value.imag
+          raise TypeError
+        if type(value) is int:
+          return float(value)
+      if self.__value_type__ is complex:
+        return value + 0j
+    raise TypeError

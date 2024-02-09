@@ -30,7 +30,6 @@ def getFids() -> dict[str, str]:
   """Getter-function for name: icon file"""
   root = getProjectRoot()
   there = os.path.join(root, 'src', 'morevistside', 'actionmenus', 'icons')
-  ic(there)
   data = {}
   for item in os.listdir(there):
     base = os.path.basename(item)

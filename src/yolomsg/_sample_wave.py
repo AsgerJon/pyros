@@ -39,17 +39,23 @@ def generateStochasticSineWave(frequency: float,
   return noisySineValue
 
 
+def sineWave(frequency: float) -> float:
+  """Sine wave """
+  t = rospy.get_time()
+  return math.sin(frequency * t)
+
+
 def sampleWave():
   """
   Initialize ROS node and publish stochastic sine wave values.
   """
   rospy.init_node('LOL', anonymous=False)
   publisher = rospy.Publisher('/tool/pump_current', Float64,
-                              queue_size=10)
-  rate = rospy.Rate(10)  # 10 Hz
+                              queue_size=100)
+  rate = rospy.Rate(20)  # 10 Hz
 
   while not rospy.is_shutdown():
-    noisySineValue = generateStochasticSineWave(0.01, 1.0, 0.0, 0.1)
+    noisySineValue = sineWave(5)
     rospy.loginfo(noisySineValue)
     # val = Float32Stamped(data=noisySineValue, )
     publisher.publish(noisySineValue)

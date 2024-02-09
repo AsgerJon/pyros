@@ -54,10 +54,9 @@ class EZMeta(AbstractMetaclass):
 
   def __call__(cls, *args, **kwargs) -> Any:
     ezFields = getattr(cls, '__ez_fields__')
-    self = AbstractMetaclass.__call__(cls, )
-    for (arg, (key, val)) in zip(args, ezFields.items()):
-      if isinstance(arg, val.__value_type__):
-        setattr(self, key, arg)
+    self = object.__new__(cls)
+    for (arg, (key, field)) in zip(args, ezFields.items()):
+      field.__set__(self, EZField._typeGuard(field, arg))
     return self
 
   def __str__(cls, ) -> str:
