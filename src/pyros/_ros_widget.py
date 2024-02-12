@@ -9,14 +9,4 @@ from PySide6.QtWidgets import QWidget
 
 class RosWidget(QWidget):
   """RosWidget"""
-
-  def paintEvent(self, event: QPaintEvent) -> None:
-    """Bla"""
-
-    p = QPainter()
-    p.begin(self)
-
-    p.end()
-
-  def mousePressEvent(self, event: QMouseEvent) -> None:
-    """Mouse event"""
+  

@@ -4,6 +4,10 @@ objects as expected in Python. """
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from ._data_roll import DataRoll
+from ._turtle_roll import TurtleRoll
+from ._turtle import Turtle
+
 from ._topic_type import TopicType
 from ._ros_reg import RosReg
 from ._ros_master import RosMaster

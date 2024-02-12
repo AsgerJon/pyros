@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
 
 from PySide6.QtGui import QPainterPath
@@ -11,16 +12,13 @@ from PySide6.QtWidgets import QApplication, QWidget
 from icecream import ic
 from numpy import nan, full, array, isnan
 from pyperclip import copy, paste
-from rospy import Subscriber
 from vistutils import maybe, getProjectRoot, monoSpace
 import shiboken6
 from shiboken6.Shiboken import Object
-from vistutils.fields import apply
 
 from morevistside import shibokinator
 from morevistside.actionmenus import convertImage, getFids
-from morevistside.paintmelike import PlotWindow
-from morevistside.widgets import Space, Point
+from deprecated.widgets import Space, Point
 from morevistside.windows import MainWindow
 from morevistutils import applyEnv
 
@@ -235,5 +233,35 @@ def tester15() -> None:
   print(bla)
 
 
+def tester16() -> None:
+  """Test of issubclass"""
+
+  class Blabla:
+    pass
+
+  class Bla(Blabla):
+    pass
+
+  ic(issubclass(Bla, Blabla))
+  ic(issubclass(Blabla, Bla))
+
+  getProjectRoot()
+
+
+def tester17() -> None:
+  """lmao"""
+  m = sys.modules['morevistside.actionmenus']
+  f = sys.modules['morevistside.actionmenus'].__file__
+  print(f)
+  iconPath = os.path.dirname(os.path.abspath(
+    sys.modules['morevistside.actionmenus'].__file__))
+  print(iconPath)
+
+
+def tester18() -> None:
+  """yolo"""
+  subprocess.Popen('python3', './src/pyros/_derby.py')
+
+
 if __name__ == '__main__':
-  tester01()
+  tester18()

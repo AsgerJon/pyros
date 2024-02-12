@@ -9,7 +9,7 @@ from PySide6.QtGui import QColor
 from vistutils.fields import AbstractField
 from vistutils.waitaminute import typeMsg
 
-from morevistside.widgets import Color
+from deprecated.widgets import Color
 
 
 class ColorField(AbstractField):

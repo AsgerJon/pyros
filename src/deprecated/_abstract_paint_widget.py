@@ -11,7 +11,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QPaintEvent, QPainter
 from vistutils.fields import Field
 
-from morevistside.widgets import BaseWidget
+from deprecated.widgets import BaseWidget
 
 if TYPE_CHECKING:
   from deprecated.paintlayers import AbstractPaintLayer

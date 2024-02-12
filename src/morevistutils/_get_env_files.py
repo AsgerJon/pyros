@@ -7,12 +7,16 @@ from __future__ import annotations
 
 import os
 
+from icecream import ic
 from vistutils import getProjectRoot, monoSpace
+
+ic.configureOutput(includeContext=True)
 
 
 def getEnvFiles() -> str:
   """The getEnvFiles returns the path to .env and .env.example"""
   root = getProjectRoot()
+  ic(root)
   fids = [os.path.join(root, name) for name in ['.env', '.env.example']]
   for fid in fids:
     if os.path.exists(fid):

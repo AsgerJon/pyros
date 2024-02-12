@@ -11,7 +11,7 @@ from vistutils import maybe
 from vistutils.fields import Field
 
 from deprecated.paintlayers import TextLayer, SolidLayer
-from morevistside.widgets import AbstractPaintWidget
+from deprecated.widgets import AbstractPaintWidget
 from morevistutils.waitaminute import typeMsg
 
 ic.configureOutput(includeContext=True)

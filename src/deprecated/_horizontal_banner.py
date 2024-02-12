@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from icecream import ic
 
-from morevistside.widgets import FillWidget
+from deprecated.widgets import FillWidget
 
 ic.configureOutput(includeContext=True)
 

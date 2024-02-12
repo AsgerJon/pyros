@@ -1,0 +1,27 @@
+{
+  "newAction": {
+    "title": "New",
+    "name": "new",
+    "tooltip": "Create a new project"
+  },
+  "openAction": {
+    "title": "Open",
+    "name": "open",
+    "tooltip": "Open an existing project"
+  },
+  "saveAction": {
+    "title": "Save",
+    "name": "save",
+    "tooltip": "Save the current project"
+  },
+  "saveAsAction": {
+    "title": "Save As",
+    "name": "saveAs",
+    "tooltip": "Save the current project under a new name"
+  },
+  "exitAction": {
+    "title": "Exit",
+    "name": "exit",
+    "tooltip": "Exit the application"
+  }
+}

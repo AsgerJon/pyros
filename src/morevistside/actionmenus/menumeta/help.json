@@ -1,0 +1,14 @@
+{
+  "helpMenu": {
+    "aboutQtAction": {
+      "title": "About Qt",
+      "name": "aboutQt",
+      "tooltip": "Show information about Qt"
+    },
+    "documentationAction": {
+      "title": "Documentation",
+      "name": "documentation",
+      "tooltip": "Open the documentation"
+    }
+  }
+}

@@ -7,13 +7,11 @@ from typing import Any
 
 from PySide6.QtGui import QColor
 from icecream import ic
-from rospy import Publisher, Subscriber
 
 from morevistside import parseHex
 from morevistside.paintmelike import SolidBackground, TextLabel
-from morevistside.widgets import PaintWidget
+from deprecated.widgets import PaintWidget
 from morevistutils.waitaminute import typeMsg
-from yolomsg import Float32Stamped
 
 ic.configureOutput(includeContext=True)
 

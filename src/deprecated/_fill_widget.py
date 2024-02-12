@@ -11,7 +11,7 @@ from PySide6.QtGui import QColor, QPaintEvent, QBrush, QPainter
 from vistutils import monoSpace
 from vistutils.fields import Field
 
-from morevistside.widgets import BaseWidget
+from deprecated.widgets import BaseWidget
 
 
 class FillWidget(BaseWidget):

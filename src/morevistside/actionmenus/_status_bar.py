@@ -3,11 +3,10 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from PySide6.QtWidgets import QStatusBar, QLabel
+from PySide6.QtWidgets import QStatusBar
 
 from morevistside import parseParent
-from morevistside.widgets import WidgetField, LabelWidget
-from morevistutils.fields import SpecialField
+from deprecated.widgets import WidgetField, LabelWidget
 
 
 class StatusBar(QStatusBar):

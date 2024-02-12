@@ -10,9 +10,8 @@ from PySide6.QtWidgets import QWidget, QGridLayout
 from icecream import ic
 from vistutils.fields import Field
 
-from morevistside.widgets import WidgetField, LabelWidget, PlotWidget
+from deprecated.widgets import WidgetField, LabelWidget, PlotWidget
 from morevistside.windows import BaseWindow
-from morevistutils import DataArray
 from morevistutils.waitaminute import typeMsg
 
 ic.configureOutput(includeContext=True)

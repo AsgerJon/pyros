@@ -14,7 +14,6 @@ from morevistside.actionmenus import getIcon
 from morevistside.windows import MainWindow
 from pyros import RosReg
 from tester_class_01 import Point
-from tester_class_02 import Parent, Child
 
 ic.configureOutput(includeContext=True)
 
@@ -42,23 +41,7 @@ def tester02() -> None:
 
 
 def tester03() -> None:
-  """Inheritance"""
-  parent = Parent()
-  child = Child()
-  child = object.__new__(Child)
-  parent.someMethod()
-  parent.otherMethod()
-  child.someMethod()
-  child.otherMethod()
-  ic(Parent.someMethod is Child.someMethod)
-  ic(Parent.otherMethod is Child.otherMethod)
-  ic(Parent.staticMethod is Child.staticMethod)
-
-  ic(parent.someMethod is child.someMethod)
-  ic(parent.someMethod.__func__ is child.someMethod.__func__)
-  ic(parent.otherMethod is child.otherMethod)
-  ic(parent.otherMethod.__func__ is child.otherMethod.__func__)
-  ic(parent.staticMethod is child.staticMethod)
+  """RosNode"""
 
 
 def tester04() -> None:

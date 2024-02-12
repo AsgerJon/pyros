@@ -1,4 +1,4 @@
-"""The loadEnv function loads the environment files located at project
+"""The loadEnv function loads the environment files.json located at project
 root."""
 #  MIT Licence
 #  Copyright (c) 2024 Asger Jon Vistisen
@@ -8,7 +8,7 @@ from morevistutils import getEnvFiles
 
 
 def loadEnv() -> dict:
-  """The loadEnv function loads the environment files located at project
+  """The loadEnv function loads the environment files.json located at project
   root."""
 
   with open(getEnvFiles(), 'r') as f:

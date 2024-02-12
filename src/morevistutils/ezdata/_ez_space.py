@@ -54,3 +54,8 @@ class EZSpace(BaseNamespace):
     for (key, val) in annotations_.items():
       out |= {key: self.resolveType(val)}
     return out
+
+  def compile(self) -> dict:
+    """Compiles elements from the class body execution and returns them in
+    a normal dictionary. """
+    return {k: v for (k, v) in dict.items(self)}

@@ -479,7 +479,7 @@ class BaseWindow(QMainWindow):
     self.menuBar().addMenu(self.getDebugMenu())
 
   def createFilesMenu(self) -> None:
-    """Creator function for files menu"""
+    """Creator function for files.json menu"""
     filesIcon = getIcon('files_menu')
     self.filesMenu = self.menuBar().addMenu('Files')
     # self.filesMenu.setIcon(filesIcon)
@@ -527,7 +527,7 @@ class BaseWindow(QMainWindow):
     self.getDebugAction12()
 
   def getFilesMenu(self, **kwargs) -> QMenu:
-    """Getter-function for files menu"""
+    """Getter-function for files.json menu"""
     if self.filesMenu is None:
       if kwargs.get('_recursion', False):
         raise RecursionError

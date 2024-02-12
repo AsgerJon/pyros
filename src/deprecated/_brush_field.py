@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush
 from vistutils.fields import AbstractField
 
-from morevistside.widgets import ColorField
+from deprecated.widgets import ColorField
 
 
 class BrushField(AbstractField):

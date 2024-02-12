@@ -1,0 +1,29 @@
+{
+  "editMenu": {
+    "cutAction": {
+      "title": "Cut",
+      "name": "cut",
+      "tooltip": "Cut the selected text or item"
+    },
+    "copyAction": {
+      "title": "Copy",
+      "name": "copy",
+      "tooltip": "Copy the selected text or item"
+    },
+    "pasteAction": {
+      "title": "Paste",
+      "name": "paste",
+      "tooltip": "Paste from clipboard"
+    },
+    "undoAction": {
+      "title": "Undo",
+      "name": "undo",
+      "tooltip": "Undo the last action"
+    },
+    "redoAction": {
+      "title": "Redo",
+      "name": "redo",
+      "tooltip": "Redo the previously undone action"
+    }
+  }
+}

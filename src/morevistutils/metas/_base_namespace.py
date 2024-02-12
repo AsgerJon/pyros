@@ -7,9 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from vistutils.metas import Bases
-
-from morevistutils.metas import AbstractNamespace
+from vistutils.metas import Bases, AbstractNamespace
 
 
 class BaseNamespace(AbstractNamespace):

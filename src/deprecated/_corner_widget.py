@@ -9,7 +9,7 @@ from __future__ import annotations
 from PySide6.QtCore import QSize
 from icecream import ic
 
-from morevistside.widgets import FillWidget
+from deprecated.widgets import FillWidget
 
 
 class CornerWidget(FillWidget):
