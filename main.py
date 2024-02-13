@@ -3,9 +3,13 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import cProfile
 import os
+import pstats
 import subprocess
 import sys
+import webbrowser
+from typing import Callable
 
 from PySide6.QtGui import QPainterPath
 from PySide6.QtWidgets import QApplication, QWidget
@@ -42,6 +46,7 @@ def tester01() -> None:
   mainWindow.show()
   app.exec()
   # sys.exit(app.exec())
+  print('lmao')
 
 
 def tester02() -> None:
@@ -260,8 +265,38 @@ def tester17() -> None:
 
 def tester18() -> None:
   """yolo"""
-  subprocess.Popen('python3', './src/pyros/_derby.py')
+  print('lol')
+
+
+def main(tester: Callable) -> None:
+  """LOL"""
+
+  profiler = cProfile.Profile()
+  profiler.enable()
+  tester()
+  profiler.disable()
+  stats = pstats.Stats(profiler).sort_stats('cumulative')
+  root = getProjectRoot()
+  statsName = 'profile.stats'
+  statsFile = os.path.join(root, statsName)
+  stats.dump_stats(statsFile)
+  flameName = 'flames.svg'
+  flameFile = os.path.join(root, flameName)
+  runKwargs = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+  runArgs = ['flameprof', statsName, '-o', flameName]
+  result = subprocess.run(runArgs, **runKwargs)
+  if result.stderr:
+    raise RuntimeError(result.stderr)
+  print(result.stdout)
+  url = 'file://%s' % os.path.abspath(flameFile)
+  fox = None
+  try:
+    fox = webbrowser.get('firefox')
+  except webbrowser.Error as e:
+    print(e)
+  if fox is not None:
+    fox.open_new_tab(url)
 
 
 if __name__ == '__main__':
-  tester18()
+  tester01()

@@ -6,7 +6,7 @@ for connecting any signals and slots to and from the visual elements. """
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from PySide6.QtWidgets import QWidget, QGridLayout
+from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton
 from icecream import ic
 from vistutils.fields import Field
 
@@ -25,6 +25,7 @@ class LayoutWindow(BaseWindow):
 
   helloWorld = WidgetField(LabelWidget, 'yolo', 128, 64)
   debug = WidgetField(LabelWidget, 'DEBUG', 256, 64)
+  button = WidgetField(QPushButton, 'LMAO')
   plot = Field()
 
   def _createPlot(self, ) -> None:
@@ -54,6 +55,7 @@ class LayoutWindow(BaseWindow):
   def initUI(self, ) -> None:
     """Sets up the widgets"""
     self.baseLayout.addWidget(self.helloWorld, 0, 0, 1, 1)
+    self.baseLayout.addWidget(self.button, 0, 1, 1, 1)
     self.baseLayout.addWidget(self.plot, 1, 0, 1, 2)
     self.baseLayout.addWidget(self.debug, 2, 1, 1, 1)
     self.baseWidget.setLayout(self.baseLayout)

@@ -51,11 +51,11 @@ def sampleWave():
   """
   rospy.init_node('LOL', anonymous=False)
   publisher = rospy.Publisher('/tool/pump_current', Float64,
-                              queue_size=100)
+                              queue_size=1)
   rate = rospy.Rate(20)  # 10 Hz
 
   while not rospy.is_shutdown():
-    noisySineValue = sineWave(5)
+    noisySineValue = sineWave(1)
     rospy.loginfo(noisySineValue)
     # val = Float32Stamped(data=noisySineValue, )
     publisher.publish(noisySineValue)

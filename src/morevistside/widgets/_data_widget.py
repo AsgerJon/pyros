@@ -6,6 +6,7 @@ painting. """
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from PySide6.QtGui import QPaintEvent
 from vistutils.fields import Field
 
 from morevistside.widgets import FillWidget
@@ -21,3 +22,6 @@ class DataWidget(FillWidget):
 
   def __init__(self, *args, **kwargs) -> None:
     FillWidget.__init__(self, *args, **kwargs)
+
+  def paintEvent(self, event: QPaintEvent) -> None:
+    """Paint implementation"""

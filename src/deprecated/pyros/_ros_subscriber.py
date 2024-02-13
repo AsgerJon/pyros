@@ -5,16 +5,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from pyros import RosTopic, RosReg
+from pyros import RosTopic
 import std_msgs.msg as msg
 
 
 class RosSubscriber(RosTopic):
   """The RosSubscriber encapsulates the ros subscriber logic"""
-
-  def _getRegType(self, ) -> RosReg:
-    """Getter-function for the registration type"""
-    return RosReg.SUB
 
   def _getDataClass(self) -> Any:
     """Getter-function for data class"""

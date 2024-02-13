@@ -109,7 +109,7 @@ class InstanceField:
       if callable(setter):
         return setter
       e = typeMsg('setter', setter, Callable)
-      raise TypeError
+      raise TypeError(e)
     try:
       return getattr(owner, pvtName)
     except AttributeError as attributeError:

@@ -4,9 +4,10 @@ compared to native python structures."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from typing import Generic, TypeVar, Tuple
+from typing import Generic, TypeVar, Any
+from warnings import warn
+
 import numpy as np
-from numba import njit
 from numpy.typing import NDArray, DTypeLike
 
 T = TypeVar('T')
@@ -16,59 +17,112 @@ class DataRoll(Generic[T]):
   """Implements a high-performance circular buffer using Numba.
   
   Attributes:
-    size (int): The fixed size of the buffer.
-    buffer (NDArray): The array storing buffer elements.
-    start (int): The starting index, managed by Numba functions.
-    end (int): The ending index, managed by Numba functions.
-    isFull (bool): Flag to check if buffer is full, managed by Numba.
-    dtype (DTypeLike): Data type of the buffer elements.
+    __buffer_size__ (int): The fixed size of the buffer.
+    __buffer_array__ (NDArray): The array storing buffer elements.
+    __begin_index__ (int): The starting index, managed by Numba functions.
   """
 
-  def __init__(self, size: int, dtype: DTypeLike) -> None:
+  def __init__(self,
+               size: int,
+               fillValue: Any = None, ) -> None:
     """Initializes the circular buffer with a given size and dtype."""
-    self.size: int = size
-    self.buffer: NDArray[T] = np.empty(size, dtype=dtype)
-    self.start: int = 0
-    self.end: int = 0
-    self.isFull: bool = False
-    self.dtype: DTypeLike = dtype
+    self.__data_type__ = np.float64
+    self.__buffer_size__ = size
+    self.__default_value__ = 0 if fillValue is None else fillValue
+    self.__buffer_array__ = np.ones(
+      size, dtype=self.__data_type__) * self.__default_value__
+    self.__begin_index__ = 0
+    self.__iter_array__ = np.zeros(size, dtype=self.__data_type__)
+    self.__iter_index__ = 0
 
   def append(self, item: T) -> None:
     """Appends an item to the buffer, overwriting the oldest if full."""
-    self.start, self.end, self.isFull = append_numba(
-      self.buffer, self.start, self.end, self.isFull, item, self.size
-    )
+    self.__buffer_array__[self.__begin_index__] = item
+    self.__begin_index__ += 1
+    self.__begin_index__ %= self.__buffer_size__
 
-  def __iter__(self) -> NDArray[T]:
+  def getArray(self) -> NDArray:
+    """Getter-function for the buffer array."""
+    return np.concatenate(
+      (self.__buffer_array__[self.__begin_index__:],
+       self.__buffer_array__[:self.__begin_index__]))
+
+  def reset(self, ) -> None:
+    """Reorders the buffer array"""
+    self.__buffer_array__ = self.getReset()
+
+  def getReset(self) -> NDArray:
+    """Resets the buffer to its default value."""
+    return np.concatenate(
+      (self.__buffer_array__[self.__begin_index__:],
+       self.__buffer_array__[:self.__begin_index__]))
+
+  def __iter__(self) -> DataRoll:
     """Yields the buffer's current elements."""
-    return iter_numba(self.buffer,
-                      self.start,
-                      self.end,
-                      self.isFull,
-                      self.size)
+    self.__iter_array__ = self.getReset()
+    return self
 
+  def __next__(self, ) -> Any:
+    """Implements iteration."""
+    try:
+      self.__iter_index__ += 1
+      return self.__iter_array__[self.__iter_index__ - 1]
+    except IndexError:
+      raise StopIteration
 
-@njit
-def append_numba(buffer: NDArray[T], start: int, end: int, isFull: bool,
-                 item: T, size: int) -> Tuple[int, int, bool]:
-  """Numba-compiled function to append items to the buffer."""
-  if isFull:
-    start = (start + 1) % size
-  buffer[end] = item
-  end = (end + 1) % size
-  if end == start:
-    isFull = True
-  else:
-    isFull = False
-  return start, end, isFull
+  def __len__(self) -> int:
+    """Returns the number of items in the buffer."""
+    return self.__buffer_size__
 
+  def __modulus_index__(self, index: int) -> int:
+    """Returns the index inside the buffer."""
+    while index < 0:
+      return self.__modulus_index__(index + len(self))
+    while index >= len(self):
+      return self.__modulus_index__(index - len(self))
+    return index
 
-@njit
-def iter_numba(buffer: NDArray[T], start: int, end: int, isFull: bool,
-               size: int) -> NDArray[T]:
-  """Numba-compiled function to get a snapshot of the buffer for
-  iteration."""
-  if isFull or start <= end:
-    return buffer[start:end]
-  else:  # Handle wrap-around
-    return np.concatenate((buffer[start:], buffer[:end]))
+  def __getitem__(self, index: Any) -> T:
+    """Item retrieval."""
+    if isinstance(index, int):
+      index = self.__modulus_index__(index)
+      return self.__buffer_array__[index]
+    if isinstance(index, slice):
+      start = self.__modulus_index__(index.start)
+      stop = self.__modulus_index__(index.stop)
+      if index.step is not None:
+        w = """Step is not supported in DataRoll slicing, and will be 
+        ignored."""
+        warn(w)
+      return self.__buffer_array__[start:stop]
+    if isinstance(index, str):
+      if index.lower()[:3] == 'min':
+        return min(self.__buffer_array__)
+      if index.lower()[:3] == 'max':
+        return max(self.__buffer_array__)
+      if index.lower()[:3] == 'sum':
+        return sum(self.__buffer_array__)
+
+  def __sub__(self, other) -> DataRoll:
+    """Subtracts the buffer from another array."""
+    if isinstance(other, (int, float)):
+      out = DataRoll(self.__buffer_size__, self.__default_value__)
+      out.__buffer_array__ = self.__buffer_array__ - float(other)
+      return out
+    return NotImplemented
+
+  def __add__(self, other) -> DataRoll:
+    """Adds the buffer to another array."""
+    if isinstance(other, (int, float)):
+      out = DataRoll(self.__buffer_size__, self.__default_value__)
+      out.__buffer_array__ = self.__buffer_array__ + float(other)
+      return out
+    return NotImplemented
+
+  def __mul__(self, other) -> DataRoll:
+    """Multiplies the buffer with another array."""
+    if isinstance(other, (int, float)):
+      out = DataRoll(self.__buffer_size__, self.__default_value__)
+      out.__buffer_array__ = np.ones(self.__buffer_size__) * float(other)
+      return out
+    return NotImplemented

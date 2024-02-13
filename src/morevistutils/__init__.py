@@ -4,8 +4,9 @@
 from __future__ import annotations
 
 from ._project_paths import getProjectRoot, getIconsPath, getMenusPath
-from ._data_array import DataArray
-from ._maybe import maybeType, maybeTypes
 from ._get_env_files import getEnvFiles
 from ._load_env import loadEnv
 from ._apply_env import applyEnv
+from ._get_env_var import getEnvVar
+from ._data_array import DataArray
+from ._maybe import maybeType, maybeTypes

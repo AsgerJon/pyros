@@ -3,17 +3,19 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from pyros import DataRoll
+
 
 class Turtle:
   """Turtle class that uses a circular buffer to store positions."""
 
   def __init__(self, capacity: int) -> None:
-    self.positions = CircularBuffer(capacity)
+    self._positions = DataRoll(capacity)
 
-  def move(self, position) -> None:
+  def moveTo(self, position) -> None:
     """Records the turtle's new position."""
-    self.positions.append(position)
+    self._positions.append(position)
 
-  def get_positions(self):
+  def getPositions(self) -> list:
     """Returns all positions stored in the buffer."""
-    return list(self.positions)
+    return [i for i in self._positions]
