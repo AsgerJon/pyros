@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QMenu
 from icecream import ic
 
 from morevistside import parseParent
-from morevistside.actionmenus import MenuBar, getIcon
+from morevistside.actionmenus import getIcon
 from morevistutils.waitaminute import typeMsg
 
 ic.configureOutput(includeContext=True)
@@ -889,5 +889,6 @@ class BaseWindow(QMainWindow):
 
   def show(self) -> None:
     """Reimplementation invoking initUI, before parent show"""
+    ic('BaseWindow.show')
     self.initUI()
     return QMainWindow.show(self)

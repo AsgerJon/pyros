@@ -11,6 +11,7 @@ from vistutils.fields import Field
 from vistutils.waitaminute import typeMsg
 
 from morevistside import parseParent
+from morevistside.factories import solidBrush, parsePen
 from morevistside.widgets import SpaceWidget
 
 
@@ -18,13 +19,13 @@ class FillWidget(SpaceWidget):
   """FillWidget inherits space awareness from the SpaceWidget and extends
   with a filled background. """
 
-  __fallback_color__ = Qt.GlobalColor.yellow
+  __fallback_color__ = QColor(255, 255, 0, 255)
 
   fillColor = Field()
   fillBrush = Field()
   borderPen = Field()
 
-  @backgroundColor.GET
+  @fillColor.GET
   def getFillColor(self) -> QColor:
     """Getter-function for defined background color"""
     color = maybe(self.__background_color__, self.__fallback_color__)
@@ -34,25 +35,36 @@ class FillWidget(SpaceWidget):
     raise TypeError(e)
 
   @fillBrush.GET
-  def getFillBrush(self) -> QBrush:
+  def getFillBrush(self, **kwargs) -> QBrush:
     """Getter-function for filler brush"""
-    brush = QBrush()
-    brush.setColor(self.fillColor)
-    brush.setStyle(Qt.BrushStyle.SolidPattern)
-    return brush
+    if hasattr(self, '_fillBrush'):
+      return self._fillBrush
+    if kwargs.get('_recursion', False):
+      raise RecursionError
+    setattr(self, '_fillBrush', solidBrush(self.fillColor))
+    return self.getFillBrush(_recursion=True)
 
   @borderPen.GET
-  def getBorderPen(self) -> QPen:
+  def getBorderPen(self, **kwargs) -> QPen:
     """Getter-function for the pen drawing the outline around the widget"""
-    pen = QPen()
-    pen.setStyle(Qt.PenStyle.SolidLine)
-    pen.setColor(QColor(0, 0, 0, 255))
-    pen.setWidth(2)
-    return pen
+    if hasattr(self, '_borderPen'):
+      if isinstance(self._borderPen, QPen):
+        return self._borderPen
+      e = typeMsg('_borderPen', self._borderPen, QPen)
+      raise TypeError(e)
+    if kwargs.get('_recursion', False):
+      raise RecursionError
+    borderColor = QColor(0, 0, 0, 255)
+    borderWidth = 2
+    borderStyle = Qt.PenStyle.SolidLine
+    borderPen = parsePen(borderColor, borderWidth, borderStyle)
+    setattr(self, '_borderPen', borderPen)
+    return self.getBorderPen(_recursion=True)
 
   def __init__(self, *args, **kwargs) -> None:
     parent = parseParent(*args)
-    SpaceWidget.__init__(self, parent)
+    sizes = dict(minHeight=64, maxHeight=512, minWidth=64, maxWidth=512, )
+    SpaceWidget.__init__(self, parent, **(sizes | kwargs))
     self.__background_color__ = None
     intArgs = []
     for arg in args:

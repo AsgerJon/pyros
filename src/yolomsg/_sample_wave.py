@@ -39,10 +39,22 @@ def generateStochasticSineWave(frequency: float,
   return noisySineValue
 
 
+def multiWave() -> float:
+  """Multiple waves"""
+  t = rospy.get_time()
+  out = 0
+  for f, r in zip([1, 4, 9, 16], [1, 1, 2, 1]):
+    out += math.sin(f * t) * r
+  return out
+
+
 def sineWave(frequency: float) -> float:
   """Sine wave """
   t = rospy.get_time()
-  return math.sin(frequency * t)
+  amplitude = 1 + 0.1 * random.random() - 0.5
+  shiftNoise = 0.1 * random.random() - 0.05
+  phase = 2 * math.pi * (1 - 0.5 * random.random()) / 512 * 0
+  return math.sin(frequency * t + phase) * amplitude + shiftNoise
 
 
 def sampleWave():
@@ -55,7 +67,7 @@ def sampleWave():
   rate = rospy.Rate(20)  # 10 Hz
 
   while not rospy.is_shutdown():
-    noisySineValue = sineWave(1)
+    noisySineValue = multiWave()
     rospy.loginfo(noisySineValue)
     # val = Float32Stamped(data=noisySineValue, )
     publisher.publish(noisySineValue)

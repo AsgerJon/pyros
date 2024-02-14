@@ -8,8 +8,11 @@ from typing import Callable, Optional, Any, Never
 
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QWidget
+from icecream import ic
 from vistutils.fields import AbstractField
 from vistutils.waitaminute import typeMsg
+
+ic.configureOutput(includeContext=True)
 
 
 class WidgetField(AbstractField):
@@ -59,35 +62,19 @@ class WidgetField(AbstractField):
         return decoratedCreator
       e = typeMsg('decoratedCreator', decoratedCreator, Callable)
       raise TypeError(e)
-    widgetType = self._getWidgetType()
-    if hasattr(widgetType, '__create_instance__'):
-      callMeMaybe = getattr(widgetType, '__create_instance__')
-      if callable(callMeMaybe):
-        return callMeMaybe
-      e = typeMsg('callMeMaybe', callMeMaybe, Callable)
-      raise TypeError(e)
 
-    def create(*args, **kwargs) -> QWidget:
+    def newWidget(*args, **kwargs) -> QWidget:
       """This inferred method calls the widget type directly"""
-      widget = type.__call__(widgetType, *args, **kwargs)
-      if isinstance(widget, QWidget):
-        return widget
-      e2 = typeMsg('widget', widget, QWidget)
-      raise TypeError(e2)
+      widgetType = self._getWidgetType()
+      return widgetType(*args, **kwargs)
 
-    return create
+    return newWidget
 
   def CREATE(self, callMeMaybe: Callable) -> Callable:
     """Decorates the callable as the creator function for this instance.
     If defined, this takes precedence. """
     if self.__decorated_creator__ is not None:
       raise AttributeError
-    dataName = '__creator_dictionary__ '
-    fieldOwner = self._getFieldOwner()
-    fieldName = self._getFieldName()
-    existing = getattr(fieldOwner, dataName, {})
-    updated = {**existing, self: callMeMaybe}
-    setattr(fieldOwner, dataName, updated)
     self.__decorated_creator__ = callMeMaybe
     return callMeMaybe
 
@@ -100,7 +87,7 @@ class WidgetField(AbstractField):
     if kwargs.get('_recursion', False):
       raise RecursionError
     creator = self.getCreator()
-    widget = creator(*self.__positional_arguments__,
+    widget = creator(instance, *self.__positional_arguments__,
                      **self.__keyword_arguments__)
     setattr(instance, pvtName, widget)
     return self.__get__(instance, owner, _recursion=True, **kwargs)

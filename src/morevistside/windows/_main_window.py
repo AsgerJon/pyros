@@ -7,7 +7,7 @@ import time
 from typing import Any
 
 import rospy
-from PySide6.QtCore import QTimer, Qt, Slot
+from PySide6.QtCore import QTimer, Qt, Slot, QRect, QMargins
 from icecream import ic
 from rospy import Subscriber, Publisher
 from std_msgs.msg import Float64, String
@@ -16,7 +16,6 @@ from vistutils.fields import Field
 from morevistside.windows import LayoutWindow
 from morevistutils import DataArray
 from morevistutils.waitaminute import typeMsg
-from yolomsg import AuxCommand
 
 
 class MainWindow(LayoutWindow):
@@ -106,14 +105,14 @@ class MainWindow(LayoutWindow):
 
   def debugFunc03(self) -> None:
     """Explicitly repaint plot widget"""
-    self.plot.repaint()
+    self.timePlot.repaint()
 
   def timedPaint(self) -> None:
     """Handles timeout event"""
     if rospy.is_shutdown():
       ic('Rospy was shut down')
       return
-    self.plot.update()
+    self.timePlot.update()
     self.paintTimer.start()
 
   def _createSubscriber(self) -> None:
@@ -152,3 +151,17 @@ class MainWindow(LayoutWindow):
     """Called by button press"""
     self.publishMessage()
     ic('button triggered')
+
+  def debugFunc04(self, ) -> None:
+    """Test of rectangles"""
+    outer = QRect(0, 0, 100, 100)
+    margins = QMargins(10, 10, 10, 10)
+    inner = outer.marginsRemoved(margins)
+    ic(outer, inner, outer - margins)
+
+  def show(self) -> None:
+    """Reimplementation"""
+    ic('show')
+    LayoutWindow.show(self)
+    self.paintTimer.start()
+    # self.subscriber

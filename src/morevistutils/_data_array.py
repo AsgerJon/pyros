@@ -26,6 +26,8 @@ class DataArray:
     self.__time_array__ = DataRoll(self.__buffer_size__,
                                    self.__invocation_time__)
     self.__value_array__ = DataRoll(self.__buffer_size__, 0)
+    self.__min_x__ = None
+    self.__max_x__ = None
 
   def callback(self, value: float) -> None:
     """Callback receiving data. This should be disconnected from the paint
@@ -46,9 +48,16 @@ class DataArray:
     """Getter-function for the points"""
     T, X = self.getTimes(), self.getValues()
     t0, t1, x0, x1 = np.min(T), np.max(T), np.min(X), np.max(X)
-    x0, x1 =
+    if self.__max_x__ is None or self.__min_x__ is None:
+      self.__max_x__, self.__min_x__ = x1, x0
+    else:
+      x0 = min(np.min(X), self.__min_x__)
+      self.__min_x__ = x0
+      x1 = max(np.max(X), self.__max_x__)
+      self.__max_x__ = x1
     if (t0 - t1) ** 2 < 1e-08:
       return []  # Instead of raising ZeroDivisionError
     times = (T - t0) / (t1 - t0) * pixelSpace.width()
     values = (X - x0) / (x1 - x0) * pixelSpace.height()
-    return [QPointF(t, x) for (t, x) in zip(times, values)]
+    left, top = pixelSpace.left(), pixelSpace.top()
+    return [QPointF(t + left, x + top) for (t, x) in zip(times, values)]

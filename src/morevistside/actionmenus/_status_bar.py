@@ -6,7 +6,7 @@ from __future__ import annotations
 from PySide6.QtWidgets import QStatusBar
 
 from morevistside import parseParent
-from deprecated.widgets import WidgetField, LabelWidget
+from morevistside.widgets import LabelWidget, WidgetField
 
 
 class StatusBar(QStatusBar):

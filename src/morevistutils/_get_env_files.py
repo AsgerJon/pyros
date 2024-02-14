@@ -19,6 +19,7 @@ def getEnvFiles() -> str:
   ic(root)
   fids = [os.path.join(root, name) for name in ['.env', '.env.example']]
   for fid in fids:
+    ic(fid)
     if os.path.exists(fid):
       if os.path.isfile(fid):
         return fid
