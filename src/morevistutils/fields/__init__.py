@@ -3,6 +3,7 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from ._quick_field import QuickField
 from ._instance_field import InstanceField
 from ._data_type import DataType
 from ._env_field import EnvField

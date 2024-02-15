@@ -16,10 +16,8 @@ ic.configureOutput(includeContext=True)
 def getEnvFiles() -> str:
   """The getEnvFiles returns the path to .env and .env.example"""
   root = getProjectRoot()
-  ic(root)
   fids = [os.path.join(root, name) for name in ['.env', '.env.example']]
   for fid in fids:
-    ic(fid)
     if os.path.exists(fid):
       if os.path.isfile(fid):
         return fid

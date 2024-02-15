@@ -6,15 +6,15 @@ from __future__ import annotations
 
 import time
 
-from PySide6.QtCore import QPointF, Qt, QMargins, QRectF
-from PySide6.QtGui import QPaintEvent, QPainter, QPen, QColor, QBrush
+from PySide6.QtCore import QPointF, Qt, QMargins, QRectF, Slot
+from PySide6.QtGui import QPaintEvent, QPainter, QColor
 from PySide6.QtWidgets import QMainWindow
 from icecream import ic
 
 from morevistside.factories import solidBrush, parsePen
 from morevistside.widgets import FillWidget
-from morevistutils import DataArray
-from morevistutils.waitaminute import typeMsg
+from pyros import DataRoll
+from rosutils import dataMap
 
 ic.configureOutput(includeContext=True)
 
@@ -28,22 +28,27 @@ class PlotWidget(FillWidget):
     self.setMinimumSize(256, 128)
     self.__parent_window__ = parent
     self.__first_paint__ = True
+    self.__data_size__ = 128
+    self.__x__ = DataRoll(self.__data_size__)
+    self.__y__ = DataRoll(self.__data_size__)
 
   def getParent(self, *args, **kwargs) -> QMainWindow:
     """Getter-function for the parent window"""
     return self.__parent_window__
 
+  @Slot(float, float)
+  def receiveValues(self, x: float, y: float) -> None:
+    """Receive values for the plot"""
+    self.__x__.append(x)
+    self.__y__.append(y)
+
   def getPoints(self, pixelSpace: QRectF) -> list[QPointF]:
     """Getter-function for list of points"""
-    parent = self.getParent()
-    if hasattr(parent, 'data'):
-      data = getattr(parent, 'data')
-      if isinstance(data, DataArray):
-        return data.getPoints(pixelSpace)
-      e = typeMsg('data', data, DataArray)
-      raise TypeError(e)
-    e = """Expected parent window to provide an attribute at name: 'data'!"""
-    raise AttributeError(e)
+    pS = pixelSpace
+    x0, x1, y0, y1 = [pS.left(), pS.right(), pS.top(), pS.bottom()]
+    x_, y_, = self.__x__.getArray(), self.__y__.getArray()
+    X, Y = dataMap(x_, x0, x1), dataMap(y_, y0, y1)
+    return [QPointF(x, y) for (x, y) in zip(X, Y)]
 
   def paintEvent(self, event: QPaintEvent) -> None:
     """Implementation of paint event"""
