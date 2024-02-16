@@ -3,6 +3,7 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from ._parse_float import parseFloat
 from ._thread_field import ThreadField
 from ._types import *
 from ._resize_filter import ResizeFilter

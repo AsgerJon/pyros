@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QMenu
 from icecream import ic
 
 from morevistside import parseParent
-from morevistside.actionmenus import actionFactory, getIcon
+from morevistside.actionmenus import getIcon
 from morevistutils.waitaminute import typeMsg
 
 ic.configureOutput(includeContext=True)

@@ -8,7 +8,7 @@ from rosgraph import is_master_online
 from rosutils import initializeRosNode, getNodeStatus
 
 
-def validateInitialized(nodeName: str, **kwargs) -> bool:
+def validateInitialized(nodeName: str = None, **kwargs) -> bool:
   """Initialize the ROS environment."""
   if is_master_online():
     if getNodeStatus(nodeName):

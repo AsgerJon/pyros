@@ -4,6 +4,8 @@ field."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import logging
+import os
 import time
 
 from PySide6.QtCore import QPointF, Qt, QMargins, QRectF, Slot
@@ -39,6 +41,8 @@ class PlotWidget(FillWidget):
   @Slot(float, float)
   def receiveValues(self, x: float, y: float) -> None:
     """Receive values for the plot"""
+    x = x if x == x else 0
+    y = y if y == y else 0
     self.__x__.append(x)
     self.__y__.append(y)
 
@@ -48,7 +52,7 @@ class PlotWidget(FillWidget):
     x0, x1, y0, y1 = [pS.left(), pS.right(), pS.top(), pS.bottom()]
     x_, y_, = self.__x__.getArray(), self.__y__.getArray()
     X, Y = dataMap(x_, x0, x1), dataMap(y_, y0, y1)
-    return [QPointF(x, y) for (x, y) in zip(X, Y)]
+    return [QPointF(x, y) for (x, y) in zip(X, Y) if x == x and y == y]
 
   def paintEvent(self, event: QPaintEvent) -> None:
     """Implementation of paint event"""

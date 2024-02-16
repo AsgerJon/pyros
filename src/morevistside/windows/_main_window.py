@@ -3,32 +3,51 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import logging
+import os
+import time
+from typing import Any
+
+import numpy as np
 import rospy
-from PySide6.QtCore import QTimer, Qt, QRect, QMargins
+from PySide6.QtCore import QTimer, Qt, Signal
 from icecream import ic
+from rospy import Subscriber
+from std_msgs.msg import Float32
+from vistutils import maybe
 from vistutils.fields import Field
 
-from morevistside import ThreadField
+from morevistside import ThreadField, parseFloat
 from morevistside.windows import LayoutWindow
+from morevistutils import Dispatch
 from morevistutils.waitaminute import typeMsg
 from pyros import BaseThread
+from rosutils import subscriberFactory
 
 
 class MainWindow(LayoutWindow):
   """MainWindow subclasses LayoutWindow and provides the business logic."""
 
   __paint_timer__ = None
-
   paintTimer = Field()
-  ROS = ThreadField(BaseThread, )
 
   def __init__(self, *args, **kwargs) -> None:
     LayoutWindow.__init__(self, *args, **kwargs)
+    self._subscriber = None
+
+  def receiveData(self, data: Any = None) -> None:
+    """Test function"""
+    if data is None:
+      return self.timePlot.receiveValues(time.time(), np.nan)
+    try:
+      return self.timePlot.receiveValues(time.time(), data.data)
+    except AttributeError:
+      return self.timePlot.receiveValues(time.time(), np.nan)
 
   def _createPaintTimer(self, ) -> None:
     """Creates the update timer"""
     self.__paint_timer__ = QTimer()
-    self.__paint_timer__.setInterval(20)
+    self.__paint_timer__.setInterval(33)
     self.__paint_timer__.setTimerType(Qt.TimerType.PreciseTimer)
     self.__paint_timer__.setSingleShot(True)
     self.__paint_timer__.timeout.connect(self.timedPaint)
@@ -48,20 +67,15 @@ class MainWindow(LayoutWindow):
 
   def debugFunc01(self, ) -> None:
     """Start paint timer"""
-    ic('debug 01')
-
-  def debugFunc02(self) -> None:
-    """Explicitly repaint plot widget"""
-    self.paintTimer.start()
-
-  def debugFunc03(self) -> None:
-    """Explicitly repaint plot widget"""
+    print('debug 01')
+    print('starting dispatch test')
+    # self._dispatchTest.start()
     self.timePlot.repaint()
 
   def timedPaint(self) -> None:
     """Handles timeout event"""
     if rospy.is_shutdown():
-      ic('Rospy was shut down')
+      print('Rospy was shut down')
       return
     self.timePlot.update()
     self.paintTimer.start()
@@ -69,22 +83,6 @@ class MainWindow(LayoutWindow):
   def initUI(self) -> None:
     """Reimplementation"""
     LayoutWindow.initUI(self)
-    self.button.clicked.connect(self.buttonFunc)
-    self.ROS.pumpSignal.connect(self.timePlot.receiveValues)
     self.paintTimer.start()
-    self.ROS.start()
-
-  def buttonFunc(self) -> None:
-    """Called by button press"""
-
-  def debugFunc04(self, ) -> None:
-    """Test of rectangles"""
-    outer = QRect(0, 0, 100, 100)
-    margins = QMargins(10, 10, 10, 10)
-    inner = outer.marginsRemoved(margins)
-    ic(outer, inner, outer - margins)
-
-  def show(self) -> None:
-    """Reimplementation"""
-    LayoutWindow.show(self)
-    # self.subscriber
+    self._subscriber = subscriberFactory('/tool/pump_current',
+                                         self.receiveData, )

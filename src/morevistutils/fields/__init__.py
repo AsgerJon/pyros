@@ -10,3 +10,4 @@ from ._env_field import EnvField
 from ._typed_field import TypedField
 from ._list_field import ListField
 from ._special_field import SpecialField
+from ._field import Field

@@ -22,4 +22,4 @@ def initializeRosNode(nodeName: str, uri: str = None, **kwargs) -> bool:
   anonymousFlagKwarg = kwargs.get('anonymous', None)
   anonymousFlagEnv = os.environ.get('ROS_NAMESPACE', None)
   anonymousFlag = maybe(anonymousFlagKwarg, anonymousFlagEnv, False)
-  init_node(nodeName, anonymous=anonymousFlag)
+  init_node(nodeName, anonymous=anonymousFlag, )

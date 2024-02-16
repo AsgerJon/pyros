@@ -61,7 +61,7 @@ def sampleWave():
   """
   Initialize ROS node and publish stochastic sine wave values.
   """
-  rospy.init_node('LOL', anonymous=False)
+  # rospy.init_node('LOL', anonymous=False)
   publisher = rospy.Publisher('/tool/pump_current', Float64,
                               queue_size=1)
   rate = rospy.Rate(50)  # 10 Hz

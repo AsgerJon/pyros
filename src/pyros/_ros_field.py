@@ -3,6 +3,7 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import logging
 from typing import Any, Callable, Never
 
 from rospy import Subscriber, Publisher
@@ -52,6 +53,7 @@ class RosField(AbstractField):
     existingFields[self._getFieldName()] = self
     setattr(owner, '__named_topics__', existingTopics)
     setattr(owner, '__named_fields__', existingFields)
+    logging.debug('Owner: %s', owner)
     if hasattr(owner, 'nodeName'):
       name = getattr(owner, 'nodeName')
       if isinstance(name, str):

@@ -6,8 +6,9 @@ from __future__ import annotations
 
 from PySide6.QtCore import QThread, Signal, Slot
 from rospy.rostime import wallsleep
-from vistutils.fields import Field
 from vistutils.waitaminute import typeMsg
+
+from morevistutils.fields import Field
 
 
 class AbstractRosThread(QThread):
@@ -44,9 +45,14 @@ class AbstractRosThread(QThread):
       self.__allow_run__ = True
 
   @nodeName.GET
-  def _getNodeName(self) -> str:
+  def _getNodeName(self, **kwargs) -> str:
     if self.__node_name__ is None:
+      if kwargs.get('_recursive', False):
+        raise RecursionError
       self.__node_name__ = 'Test'
+      if isinstance(self, type):
+        callMeMaybe = getattr(self, '_getNodeName')
+        return callMeMaybe(self, _recursive=True)
       return self._getNodeName(_recursive=True)
     if isinstance(self.__node_name__, str):
       return self.__node_name__
@@ -84,3 +90,20 @@ class AbstractRosThread(QThread):
       wallsleep(0.02)
       if not self.__allow_run__:
         return
+
+  @Slot()
+  def begin(self) -> None:
+    """Start the thread"""
+    self._startRun()
+    self.start()
+    if self.isRunning():
+      return self.startedRun.emit()
+    raise RuntimeError('Thread did not start!')
+
+  @Slot()
+  def end(self) -> None:
+    """Stop the thread"""
+    self._stopRun()
+    if self.isRunning():
+      raise RuntimeError('Thread did not stop!')
+    return self.stoppedRun.emit()

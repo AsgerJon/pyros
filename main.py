@@ -3,6 +3,8 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+import _io
+import logging
 import os
 import subprocess
 import sys
@@ -17,7 +19,7 @@ from vistutils import maybe
 import shiboken6
 
 from morevistside.windows import MainWindow
-from morevistutils import applyEnv
+from morevistutils import applyEnv, getIconsPath, Debug
 from tester_class_02 import ShareField
 
 ic.configureOutput(includeContext=True)
@@ -35,11 +37,12 @@ def tester00() -> None:
 def tester01() -> None:
   """lmao"""
 
-  app = QApplication()
-  mainWindow = MainWindow()
-  mainWindow.show()
-  # app.exec()
-  sys.exit(app.exec())
+  with Debug():
+    app = QApplication()
+    mainWindow = MainWindow()
+    mainWindow.show()
+    # app.exec()
+    sys.exit(app.exec())
 
 
 def tester02() -> None:
@@ -70,6 +73,33 @@ def tester05() -> None:
   """Testing the subprocess module"""
 
   init_node('yolo', anonymous=False)
+
+
+def tester06() -> None:
+  """Testing get icons """
+  lol = subprocess.Popen(['echo'],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, )
+  for (key, val) in lol.__dict__.items():
+    break
+    print(key, type(val))
+  print(lol.stdout)
+  print(type(lol.stdout))
+
+  for (key, val) in lol.stdout.__dict__.items():
+    print(key, type(val))
+
+  for item in dir(lol.stdout):
+    print(item)
+
+  print(lol.stdout.readline())
+
+
+def tester07() -> None:
+  """lmao"""
+
+  for item in dir(_io.BufferedReader):
+    print(item)
 
 
 if __name__ == '__main__':

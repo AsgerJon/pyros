@@ -14,11 +14,11 @@ from pyros import AbstractRosThread, RosField
 class BaseThread(AbstractRosThread):
   """BaseThread is mostly a test"""
 
-  pumpCurrent = RosField('/pump/current', )
+  pumpCurrent = RosField('/tool/pump_current', )
   pumpSignal = Signal(float, float)
 
   @pumpCurrent.CALL
-  def pumpCurrent(self, data: Any) -> None:
+  def pumpCallback(self, data: Any) -> None:
     """Set the current of the pump."""
     value = data.data
     self.pumpSignal.emit(time.time(), value)

@@ -4,9 +4,12 @@ to a published topic."""
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
+from icecream import ic
 from rospy import get_published_topics
 
 from rosutils import validateInitialized
+
+ic.configureOutput(includeContext=True)
 
 
 def validateTopicName(topicName: str) -> str:
@@ -14,7 +17,7 @@ def validateTopicName(topicName: str) -> str:
   validateInitialized()
   topics = get_published_topics()
   for topic, _ in topics:
-    if topic == topicName:
+    if topic in topicName or topicName in topic:
       return topicName
   else:
     raise NameError(topicName)

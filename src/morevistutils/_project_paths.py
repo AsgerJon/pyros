@@ -30,7 +30,8 @@ def getProjectRoot() -> str:
 
 def getIconsPath() -> str:
   """Getter-function for directory of all the icons."""
-  return _getModuleRoot('icons')
+  root = getProjectRoot()
+  return os.path.join(root, 'src', 'morevistside', 'actionmenus', 'icons')
 
 
 def getMenusPath() -> str:

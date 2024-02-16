@@ -8,5 +8,7 @@ from ._get_env_files import getEnvFiles
 from ._load_env import loadEnv
 from ._apply_env import applyEnv
 from ._get_env_var import getEnvVar
+from ._debug_context import Debug
 from ._data_array import DataArray
 from ._maybe import maybeType, maybeTypes
+from ._dispatch import Dispatch

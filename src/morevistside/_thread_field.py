@@ -13,6 +13,8 @@ from vistutils.waitaminute import typeMsg
 
 ThreadType = Type[QThread]
 
+__threads__ = []
+
 
 class ThreadField(AbstractField):
   """ThreadField provides a descriptor class for subclasses of QThread that
@@ -52,10 +54,12 @@ class ThreadField(AbstractField):
 
   def _createThread(self, instance: Any, ) -> None:
     """Creator function for the thread instance"""
-    if hasattr(instance, self._getPrivateName()):
+    pvtName = self._getPrivateName()
+    if hasattr(instance, pvtName):
       e = """Thread instance already exists!"""
       raise AttributeError(monoSpace(e))
-    setattr(instance, self._getPrivateName(), self._threadFactory(instance))
+    thread = self._threadFactory(instance)
+    setattr(instance, pvtName, thread)
 
   def _getThread(self, instance: Any, **kwargs) -> QThread:
     """Getter-function for the thread instance"""

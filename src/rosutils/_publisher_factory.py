@@ -13,4 +13,4 @@ def publisherFactory(topicName: str, nodeName: str = None) -> Publisher:
   nodeName = 'Test' if nodeName is None else nodeName
   validateInitialized(nodeName)
   messageType = getTopicType(topicName)
-  return Publisher(topicName, messageType)
+  return Publisher(topicName, messageType, queue_size=10)
