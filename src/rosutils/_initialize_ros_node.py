@@ -6,7 +6,7 @@ from __future__ import annotations
 import os
 
 from rospy import init_node
-from vistutils import maybe
+from vistutils.parse import maybe
 
 
 def initializeRosNode(nodeName: str, uri: str = None, **kwargs) -> bool:

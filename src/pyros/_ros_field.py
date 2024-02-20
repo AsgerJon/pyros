@@ -7,11 +7,10 @@ import logging
 from typing import Any, Callable, Never
 
 from rospy import Subscriber, Publisher
-from vistutils import monoSpace
+from vistutils.text import monoSpace
 from vistutils.fields import AbstractField, Field
 
-from morevistutils.fields import QuickField
-from morevistutils.waitaminute import typeMsg
+from vistutils.waitaminute import typeMsg
 from pyros import MessageTypeError
 from rosutils import subscriberFactory, publisherFactory
 
@@ -23,6 +22,7 @@ class RosField(AbstractField):
   __topic_subscriber__ = None
   __topic_publisher__ = None
 
+  QuickField = type('lol', (), {'__init__': lambda *__, **_: None})
   topicName = QuickField(str, 'unnamed')
   nodeName = QuickField(str, 'Test')
 

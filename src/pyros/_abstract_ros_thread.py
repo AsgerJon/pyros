@@ -8,7 +8,7 @@ from PySide6.QtCore import QThread, Signal, Slot
 from rospy.rostime import wallsleep
 from vistutils.waitaminute import typeMsg
 
-from morevistutils.fields import Field
+from vistutils.fields import Field
 
 
 class AbstractRosThread(QThread):

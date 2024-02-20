@@ -3,26 +3,16 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-import logging
-import os
 import time
 from typing import Any
 
 import numpy as np
 import rospy
-from PySide6.QtCore import QTimer, Qt, Signal
-from icecream import ic
-from rospy import Subscriber
-from std_msgs.msg import Float32
-from vistutils import maybe
+from PySide6.QtCore import QTimer, Qt
 from vistutils.fields import Field
+from vistutils.waitaminute import typeMsg
 
-from morevistside import ThreadField, parseFloat
 from morevistside.windows import LayoutWindow
-from morevistutils import Dispatch
-from morevistutils.waitaminute import typeMsg
-from pyros import BaseThread
-from rosutils import subscriberFactory
 
 
 class MainWindow(LayoutWindow):
@@ -83,6 +73,6 @@ class MainWindow(LayoutWindow):
   def initUI(self) -> None:
     """Reimplementation"""
     LayoutWindow.initUI(self)
-    self.paintTimer.start()
-    self._subscriber = subscriberFactory('/tool/pump_current',
-                                         self.receiveData, )
+    # self.paintTimer.start()
+    # self._subscriber = subscriberFactory('/tool/pump_current',
+    #                                      self.receiveData, )

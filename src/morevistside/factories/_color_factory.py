@@ -6,11 +6,8 @@ from __future__ import annotations
 
 from typing import Optional
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QBrush, QPen, QColor
-from vistutils import maybeTypes
-
-from morevistutils.waitaminute import typeMsg
+from PySide6.QtGui import QColor
+from vistutils.waitaminute import typeMsg
 
 colorNames = {
   'red'         : QColor(255, 0, 0, 255),

@@ -4,7 +4,8 @@
 from __future__ import annotations
 
 from PySide6.QtGui import QFont
-from vistutils import stringList, maybe
+from vistutils.text import stringList
+from vistutils.parse import maybe
 
 
 def _createFont(*args, **kwargs) -> QFont:

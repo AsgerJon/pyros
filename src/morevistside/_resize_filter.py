@@ -6,7 +6,6 @@ completed."""
 from __future__ import annotations
 
 from PySide6.QtCore import QEvent, QObject, QTimer
-from PySide6.QtGui import QPaintEvent
 from PySide6.QtWidgets import QWidget
 
 

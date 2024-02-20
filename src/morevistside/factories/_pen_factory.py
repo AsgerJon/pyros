@@ -5,7 +5,10 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPen
-from vistutils import stringList, maybe
+from vistutils.text import stringList
+from vistutils.parse import maybe
+
+from morevistside.factories import parseColor
 
 
 def _createPen(*args, **kwargs) -> QPen:

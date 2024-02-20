@@ -9,7 +9,7 @@ import re
 from typing import Optional
 
 import requests
-from vistutils import monoSpace
+from vistutils.text import monoSpace
 
 
 def _isValidURI(URI: str) -> bool:

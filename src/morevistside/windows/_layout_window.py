@@ -6,11 +6,13 @@ for connecting any signals and slots to and from the visual elements. """
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton
+from PySide6.QtWidgets import QWidget, QGridLayout
 from icecream import ic
 
-from morevistside.widgets import PlotWidget, LabelWidget, WidgetField
+from morevistside.widgets import PlotWidget, LabelWidget, WidgetField, \
+  PushButton
 from morevistside.windows import BaseWindow
+from morevistutils.fields import ClassField
 
 ic.configureOutput(includeContext=True)
 
@@ -21,16 +23,16 @@ class LayoutWindow(BaseWindow):
   widgets and layouts in the main application window. It is not responsible
   for connecting any signals and slots to and from the visual elements. """
 
+  baseLayout = ClassField(QGridLayout, )
   baseWidget = WidgetField(QWidget)
   helloWorld = WidgetField(LabelWidget, 'yolo', 128, 64)
   debug = WidgetField(LabelWidget, 'DEBUG', 256, 64)
-  button = WidgetField(QPushButton, 'LMAO')
+  button = WidgetField(PushButton, 'LMAO')
   timePlot = WidgetField(PlotWidget, )
   specPlot = WidgetField(PlotWidget, )
 
   def __init__(self, *args, **kwargs) -> None:
     BaseWindow.__init__(self, *args, **kwargs)
-    self.baseLayout = QGridLayout()
     self._plot = None
     self._data = None
 
@@ -45,5 +47,4 @@ class LayoutWindow(BaseWindow):
 
   def show(self) -> None:
     """Implements initUI before show"""
-    self.initUI()
     return BaseWindow.show(self)

@@ -3,146 +3,118 @@
 #  Copyright (c) 2024 Asger Jon Vistisen
 from __future__ import annotations
 
-from typing import Any, Callable
-import sys
-from vistutils.fields import AbstractField
+from typing import Any, Callable, Never
+
+from vistutils.fields import AbstractField, Field
+from vistutils.parse import maybe
+from vistutils.text import monoSpace
 from vistutils.waitaminute import typeMsg
-
-from morevistutils.fields import DataType
-
-if sys.version_info.minor < 11:
-  from typing import NoReturn as Never
-else:
-  from typing import Never
 
 
 class TypedField(AbstractField):
   """TypedField provides a strongly typed descriptor class"""
 
-  @classmethod
-  def _getMemberListName(cls) -> str:
-    """Getter-function for name of instance list"""
-    return '__%s_instances__' % cls.__qualname__
+  __pre_init_hooks__ = []
+  __post_init_hooks__ = []
+  __owner_init__ = {}
+  __owner_new__ = {}
+
+  fieldOwner = Field()
+
+  @fieldOwner.GET
+  def _getFieldOwner(self) -> type:
+    """Getter-function for field owner"""
+    if self.__field_owner__ is not None:
+      if isinstance(self.__field_owner__, type):
+        return self.__field_owner__
+      e = typeMsg('__field_owner__', self.__field_owner__, type)
+      raise TypeError(e)
+    raise RuntimeError
+
+  @fieldOwner.SET
+  def _setFieldOwner(self, *_) -> Never:
+    """Illegal setter function"""
+    e = """The field owner is a read-only property."""
+    raise AttributeError(e)
+
+  @fieldOwner.DEL
+  def _delFieldOwner(self) -> Never:
+    """Illegal deleter function"""
+    e = """The field owner is a read-only property."""
+    raise AttributeError(e)
 
   def __init__(self, *args, **kwargs) -> None:
-    AbstractField.__init__(self, *args, **kwargs)
-    dataType = DataType(*args, )
-    self.__data_type__ = DataType(*args, )
-    self.__field_type__ = None
-    self.__field_default__ = None
+    AbstractField.__init__(*args, **kwargs)
+    parsed = [*args, None, None, None][:3]
+    typeArg, defValArg, supportInitArg = parsed
+    typeKwarg = kwargs.get('type', None)
+    defValKwarg = kwargs.get('default', None)
+    supportInitKwarg = kwargs.get('supportInit', None)
+    if typeKwarg is None and typeArg is None:
+      e = """The TypedField constructor requires a type argument or a type 
+      keyword argument."""
+      raise TypeError(e)
+    valType = maybe(typeKwarg, typeArg)
+    if not isinstance(valType, type):
+      e = typeMsg('valType', valType, type)
+      raise TypeError(e)
+    self._valueType = valType
+    defVal = maybe(defValKwarg, defValArg)
+    if defVal is not None:
+      if not isinstance(defVal, valType):
+        e = """The default value must be of the same type as the value 
+        type."""
+        raise TypeError(monoSpace(e))
+    else:
+      try:
+        defVal = valType()
+      except Exception as exception:
+        e = """Failed to create a appropriate default value for the given 
+        type: %s""" % self._valueType
+        raise ValueError(e) from exception
+    self._defVal = defVal
+    self._supportInit = maybe(supportInitKwarg, supportInitArg, False)
 
-  def _getDataType(self) -> DataType:
-    """Getter-function for underlying data type"""
-    return self.__data_type__
+  def _getInitPreHooks(self) -> list[Callable]:
+    """Getter-function for init pre hooks"""
+    return self.__pre_init_hooks__
 
-  def _getPrivateName(self, ) -> str:
-    """Getter-function for the private name of this field"""
-    return '_%s' % self.__field_name__
+  def hookPreInit(self, callMeMaybe: Callable) -> Callable:
+    """Decorator for adding pre init hooks"""
+    if not callable(callMeMaybe):
+      e = typeMsg('callMeMaybe', callMeMaybe, Callable)
+      raise TypeError(e)
+    self._getInitPreHooks().append(callMeMaybe)
+    return callMeMaybe
 
-  def _getFieldType(self, **kwargs) -> type:
-    """Getter-function for field type"""
-    if self.__field_type__ is None:
-      if kwargs.get('_recursion', False):
-        raise RecursionError
-      self.__field_type__ = self._getDataType().getType()
-      return self._getFieldType(_recursion=True)
-    if isinstance(self.__field_type__, type):
-      return self.__field_type__
-    raise TypeError
+  def _updateInit(self) -> None:
+    """Updates the __init__"""
 
-  def _getDefaultValue(self, **kwargs) -> Any:
-    """Getter-function for default value"""
-    if self.__field_default__ is None:
-      if kwargs.get('_recursion', False):
-        raise RecursionError
-      self.__field_default__ = self._getDataType().getDefault()
-      return self._getDefaultValue(_recursion=True)
-    fieldType = self._getFieldType()
-    if isinstance(self.__field_default__, fieldType):
-      return self.__field_default__
-    raise TypeError
+    def hookedInit(this: Any, *args, **kwargs) -> None:
+      """Replacement initiator"""
+      for hook in self._getInitPreHooks():
+        hook(this, *args, **kwargs)
+      self.__owner_init__(this, *args, **kwargs)
+      for hook in self._getInitPostHooks():
+        hook(this, *args, **kwargs)
+
+    setattr(self.fieldOwner, '__init__', hookedInit)
+
+  def _getInitPostHooks(self) -> list[Callable]:
+    """Getter-function for init post hooks"""
+    return self.__post_init_hooks__
+
+  def hookPostInit(self, callMeMaybe: Callable) -> Callable:
+    """Decorator for adding post init hooks"""
+    if not callable(callMeMaybe):
+      e = typeMsg('callMeMaybe', callMeMaybe, Callable)
+      raise TypeError(e)
+    self._getInitPostHooks().append(callMeMaybe)
+    return callMeMaybe
 
   @classmethod
-  def _extraInitFactory(cls, owner: type) -> Callable:
-    """Creates the addendum to the __init__"""
-
-    def __extra_init__(this: Any, *args, **kwargs) -> None:
-      """Additional logic for init"""
-      fields = getattr(owner, cls._getMemberListName(), None)
-      if fields is None:
-        raise ValueError
-      args = [*args, ]
-      while len(fields) > len(args):
-        args.append(None)
-      for (field, arg) in zip(fields, args):
-        if isinstance(field, TypedField):
-          type_ = field._getFieldType()
-          defVal = field._getDefaultValue()
-          pvtName = field._getPrivateName()
-        else:
-          raise TypeError
-        if arg is None:
-          arg = defVal
-        if isinstance(type_, type):
-          if type_ is str:
-            arg = str(arg)
-          if isinstance(arg, type_):
-            setattr(this, pvtName, arg)
-          else:
-            e = typeMsg('arg', arg, type_)
-            raise TypeError(e)
-        else:
-          raise TypeError
-
-    return __extra_init__
-
-  def __prepare_owner__(self, owner: type) -> type:
-    """Implementation of abstract method"""
-    memberListName = self._getMemberListName()
-    if hasattr(owner, memberListName):
-      existingFields = getattr(owner, memberListName)
-      setattr(owner, memberListName, (*existingFields, self))
-      return owner
-
-    baseInit = getattr(owner, '__init__')
-    if baseInit is object.__init__:
-      oldInit = lambda *__, **_: None
-    elif callable(baseInit):
-      oldInit = baseInit
-    else:
-      raise TypeError
-
-    # __extra_init__ = self.__class__._extraInitFactory(owner)
-    #
-    # def newInit(this, *args, **kwargs) -> None:
-    #   """Replacement __init__"""
-    #   __extra_init__(this, *args, **kwargs)
-    #   oldInit(this, *args, **kwargs)
-    #
-    # setattr(owner, '__init__', newInit)
-    clsName = self.__class__.__qualname__
-    setattr(owner, self._getMemberListName(), [self, ])
-    return owner
-
-  def __get__(self, instance: Any, owner: type) -> Any:
-    """Getter-function implementation"""
-    pvtName = self._getPrivateName()
-    defVal = self._getDefaultValue()
-    if instance is None:
-      return self.__get__(owner, owner)
-    if hasattr(instance, pvtName):
-      return getattr(instance, pvtName)
-    setattr(instance, pvtName, defVal)
-    return self.__get__(instance, owner)
-
-  def __set__(self, instance: Any, value: Any) -> None:
-    """Setter-function implementation"""
-    pvtName = self._getPrivateName()
-    fieldType = self._getFieldType()
-    if isinstance(value, fieldType):
-      return setattr(instance, pvtName, value)
-    raise TypeError
-
-  def __delete__(self, instance: Any) -> Never:
-    """Illegal deleter function"""
-    raise TypeError
+  def __prepare_owner__(cls, owner: type) -> None:
+    """This special abstract method must be implemented by subclasses to
+    install this field into it."""
+    cls.__owner_init__ |= {owner: getattr(owner, '__init__')}
+    cls.__owner_new__ |= {owner: getattr(owner, '__new__')}

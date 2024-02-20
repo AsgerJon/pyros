@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Any
 
 from PySide6.QtGui import QColor
-from vistutils import monoSpace
+from vistutils.text import monoSpace
 
 
 def _parseByte(*chars) -> int:

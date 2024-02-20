@@ -57,7 +57,7 @@ def sineWave(frequency: float) -> float:
   return math.sin(frequency * t + phase) * amplitude + shiftNoise
 
 
-def sampleWave():
+def sampleWave() -> None:
   """
   Initialize ROS node and publish stochastic sine wave values.
   """

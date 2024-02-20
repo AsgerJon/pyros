@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Type, Any, Never
 
 from PySide6.QtCore import QThread
-from vistutils import monoSpace
+from vistutils.text import monoSpace
 from vistutils.fields import AbstractField
 from vistutils.waitaminute import typeMsg
 

@@ -5,7 +5,8 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QColor
-from vistutils import stringList, maybe
+from vistutils.text import stringList
+from vistutils.parse import maybe
 
 from morevistside.factories import parseColor
 

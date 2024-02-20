@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Any
 
 from rospy import Subscriber
-from vistutils import maybe
+from vistutils.parse import maybe
 
 from rosutils import getTopicType, validateInitialized
 
